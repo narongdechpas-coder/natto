@@ -8,9 +8,11 @@
     "build": "tsc -b && vite build",
     "preview": "vite preview",
     "test": "vitest run",
-    "report": "tsx scripts/dataset-report.ts"
+    "report": "tsx scripts/dataset-report.ts",
+    "e2e": "node scripts/e2e-marketing.mjs"
   },
   "dependencies": {
+    "lucide-react": "^1.68.0",
     "react": "^19.3.1",
     "react-dom": "^19.3.1"
   },
