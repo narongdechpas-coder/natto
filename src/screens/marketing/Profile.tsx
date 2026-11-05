@@ -6,6 +6,7 @@ import { fmtDate } from '../../domain/labels';
 import { useStore } from '../../state/store';
 import { Note, PageHeader, Sheet } from '../../ui/common';
 import { navigate } from '../../ui/router';
+import { InstallApp } from '../../ui/InstallApp';
 
 const ROLE = { marketing: 'Marketing', manager: 'Manager', executive: 'ผู้บริหาร' } as const;
 
@@ -35,6 +36,7 @@ export default function Profile({ user }: { user: User }) {
 
         <div className="section stack">
           <Note>ข้อมูลรายเดือน ณ {fmtDate(DATA_AS_OF)} · วันที่ใน demo คือ {fmtDate(today)} · ข้อมูลทั้งหมดเป็นข้อมูลจำลอง</Note>
+          <InstallApp block />
           <button className="btn danger block" onClick={() => setConfirm(true)}><RotateCcw size={18} /> รีเซ็ตข้อมูล demo</button>
           <button className="btn secondary block" onClick={() => { logout(); navigate('/login'); }}><LogOut size={18} /> ออกจากระบบ</button>
         </div>

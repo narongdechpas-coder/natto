@@ -14,6 +14,7 @@ npm run build        # static site in dist/ (index.html + presentation.html)
 
 - App: https://narongdechpas-coder.github.io/natto/
 - Presentation: https://narongdechpas-coder.github.io/natto/presentation.html
+- Installable as a mobile app (PWA): open the app link → "ติดตั้งแอปลงมือถือ" (Chrome/Edge/Android) or Share → Add to Home Screen (iOS Safari). Works offline after the first visit.
 - Redeploy after changes: `npm run deploy` (builds and force-pushes `dist/` to the `gh-pages` branch)
 
 ## Checks

@@ -13,7 +13,7 @@ async function session(viewport, uid) {
   const ctx = await browser.newContext({ viewport, deviceScaleFactor: 2, locale: 'th-TH' });
   const page = await ctx.newPage();
   await page.goto(BASE);
-  await page.evaluate((u) => { localStorage.clear(); localStorage.setItem('natto-demo-v1-session', JSON.stringify({ userId: u })); }, uid);
+  await page.evaluate((u) => { localStorage.clear(); localStorage.setItem('natto-demo-v1-session', JSON.stringify({ userId: u })); sessionStorage.setItem('natto-welcome-seen', '1'); }, uid);
   return { ctx, page };
 }
 const go = async (page, route, uid) => { await page.goto(`${BASE}?s=${uid}-${Date.now()}#${route}`); await page.waitForTimeout(900); };

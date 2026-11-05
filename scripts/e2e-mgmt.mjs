@@ -18,7 +18,7 @@ const check = (name, ok, extra = '') => { results.push({ ok }); console.log(`${o
 const text = () => page.locator('body').innerText();
 const shot = (n, full = true) => page.screenshot({ path: `${OUT}/${n}.png`, fullPage: full });
 const as = async (uid) => {
-  await page.evaluate((u) => localStorage.setItem('natto-demo-v1-session', JSON.stringify({ userId: u })), uid);
+  await page.evaluate((u) => { localStorage.setItem('natto-demo-v1-session', JSON.stringify({ userId: u })); sessionStorage.setItem('natto-welcome-seen', '1'); }, uid);
   // Full navigation (new query string) so the app re-reads the session from storage.
   await page.goto(`${BASE}?as=${uid}-${Date.now()}#/`); await page.waitForTimeout(800);
 };

@@ -20,8 +20,26 @@ const shot = (n) => page.screenshot({ path: `${OUT}/${n}.png`, fullPage: true })
 const text = () => page.locator('body').innerText();
 
 await page.goto(BASE);
-await page.evaluate(() => localStorage.clear());
-await page.goto(BASE + '#/login');
+await page.evaluate(() => { localStorage.clear(); sessionStorage.clear(); });
+await page.goto(BASE + '?fresh=1');
+// Welcome screen: mascot → name → tagline → actions, then into login
+await page.waitForSelector('.welcome');
+await page.waitForTimeout(2800);
+await shot('00-welcome');
+let w = await text();
+check('Welcome shows name, tagline and start button', w.includes('นัดโตะ') && w.includes('วันนี้คุณควรไปพบใคร') && w.includes('เริ่มต้นใช้งาน'));
+check('Welcome offers app install', w.includes('ติดตั้งแอปลงมือถือ'));
+check('Manifest linked', (await page.locator('link[rel="manifest"]').count()) === 1);
+const manifest = await page.evaluate(async () => (await fetch('./manifest.webmanifest')).json());
+check('Manifest has name, standalone display and 192/512 icons', manifest.short_name === 'นัดโตะ' && manifest.display === 'standalone' && manifest.icons.some((i) => i.sizes === '512x512') && manifest.icons.some((i) => i.sizes === '192x192'));
+const icon = await page.evaluate(async () => (await fetch('./icons/icon-512.png')).ok);
+check('Icons served', icon);
+const sw = await page.evaluate(async () => { const r = await navigator.serviceWorker.getRegistration(); return !!r; });
+check('Service worker registered', sw);
+await page.getByRole('button', { name: /เริ่มต้นใช้งาน/ }).click();
+await page.waitForSelector('text=เลือกผู้ใช้สำหรับ demo');
+await page.reload(); await page.waitForTimeout(500);
+check('Welcome shown only once per session', !(await page.locator('.welcome').count()));
 await page.getByText('กิตติ').first().click();
 await page.waitForSelector('text=สวัสดี, กิตติ');
 await page.waitForTimeout(600);

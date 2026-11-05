@@ -4,6 +4,7 @@ import { userById } from './state/selectors';
 import { BottomNav, DemoRibbon, ErrorBoundary, SkeletonList, StateView, Toast } from './ui/common';
 import { navigate, useRoute } from './ui/router';
 import Login from './screens/Login';
+import Welcome, { WELCOME_KEY } from './screens/Welcome';
 import Dashboard from './screens/marketing/Dashboard';
 import Recommendations from './screens/marketing/Recommendations';
 import RecommendationDetail from './screens/marketing/RecommendationDetail';
@@ -23,10 +24,18 @@ export default function App() {
   const { session, data, toast } = useStore();
   const { path, parts, query } = useRoute();
   const [booting, setBooting] = useState(true);
+  // Welcome screen once per app launch (browser session). Deep links (any route other than home/login) skip it.
+  const [welcome, setWelcome] = useState(() => {
+    try { if (sessionStorage.getItem(WELCOME_KEY)) return false; } catch { return false; }
+    const h = window.location.hash.replace(/^#/, '');
+    return h === '' || h === '/' || h === '/login';
+  });
 
   // Short simulated load so the loading state is visible in the demo.
   useEffect(() => { const t = setTimeout(() => setBooting(false), 450); return () => clearTimeout(t); }, []);
   useEffect(() => { if (!session.userId && path !== '/login') navigate('/login'); }, [session.userId, path]);
+
+  if (welcome) return <Welcome onDone={() => setWelcome(false)} />;
 
   if (!session.userId || path === '/login') {
     return <><DemoRibbon /><Login /><Toast msg={toast} /></>;
