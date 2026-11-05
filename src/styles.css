@@ -431,3 +431,14 @@ details.disclose summary::-webkit-details-marker { display: none; }
 .a4-foot { display: flex; justify-content: space-between; gap: 12px; font-size: 10.5px; color: var(--ink-3); border-top: 1px solid var(--line); padding-top: 6px; margin-top: auto; }
 .spin { animation: spin 1s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
+
+/* Welcome footer credit — sits above the wave, fades in last */
+.welcome-credit {
+  position: absolute; left: 0; right: 0; margin: 0 auto; width: fit-content; bottom: calc(64px + env(safe-area-inset-bottom)); z-index: 2;
+  display: flex; align-items: center; gap: 8px; padding: 4px 14px 4px 4px; border-radius: 999px;
+  background: rgba(255,255,255,.75); box-shadow: 0 2px 10px rgba(21,53,125,.08);
+  font-size: 13px; color: var(--ink-2); white-space: nowrap; animation: wl-up .6s 2.3s ease-out both;
+}
+.welcome-credit img { width: 40px; height: 40px; object-fit: contain; }
+.welcome-credit b { font-family: var(--font-head); font-weight: 500; color: var(--navy); }
+@media (max-height: 700px) { .welcome-credit { bottom: calc(14px + env(safe-area-inset-bottom)); } }

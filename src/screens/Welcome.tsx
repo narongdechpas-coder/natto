@@ -44,6 +44,10 @@ export default function Welcome({ onDone }: { onDone: () => void }) {
           <p className="xs muted" style={{ margin: 0 }}>DEMO · ข้อมูลทั้งหมดเป็นข้อมูลจำลอง</p>
         </div>
       </div>
+      <footer className="welcome-credit">
+        <img src="./assets/jacky.webp" alt="" width={40} height={40} />
+        <span>Design by <b>Jacky</b></span>
+      </footer>
       <div className="welcome-wave" aria-hidden />
     </main>
   );
