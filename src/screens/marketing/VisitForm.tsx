@@ -1,4 +1,4 @@
-import { Check, Plus, Sparkles, Trash2 } from 'lucide-react';
+import { Check, Plus, Sparkles, Trash2, X } from 'lucide-react';
 import { useState } from 'react';
 import type { Sentiment, SevenP, Severity, User, VisitOutcome, VisitStatus } from '../../domain/types';
 import { SEVEN_P } from '../../domain/types';
@@ -13,7 +13,8 @@ import { navigate } from '../../ui/router';
 import { useExplanation } from './shared';
 
 type Rating = Sentiment | 'skip';
-interface PState { rating: Rating; severity: Severity; detail: string; ai: boolean }
+interface PState { rating: Rating; severity: Severity; detail: string; ai: boolean; aiPrev?: Omit<PState, 'aiPrev'> }
+const EMPTY_P: Omit<PState, 'aiPrev'> = { rating: 'skip', severity: 'medium', detail: '', ai: false };
 interface Action { action: string; ownerName: string; dueDate: string; p: SevenP | null }
 
 const OWNERS = ['ตัวฉันเอง', 'ทีม Product', 'ทีม Underwriting', 'ทีม Claims', 'ทีม Operations', 'ทีม Marketing', 'ทีม Training'];
@@ -31,7 +32,7 @@ export default function VisitForm({ partnerId, user, recId, planId }: { partnerI
   const [outcome, setOutcome] = useState<VisitOutcome>('met_objective');
   const [summary, setSummary] = useState('');
   const [newDate, setNewDate] = useState('');
-  const [ps, setPs] = useState<Record<SevenP, PState>>(() => Object.fromEntries(SEVEN_P.map((k) => [k, { rating: 'skip', severity: 'medium', detail: '', ai: false }])) as Record<SevenP, PState>);
+  const [ps, setPs] = useState<Record<SevenP, PState>>(() => Object.fromEntries(SEVEN_P.map((k) => [k, { ...EMPTY_P }])) as Record<SevenP, PState>);
   const [actions, setActions] = useState<Action[]>([]);
   const [confirmed, setConfirmed] = useState(false);
   const [err, setErr] = useState('');
@@ -45,16 +46,37 @@ export default function VisitForm({ partnerId, user, recId, planId }: { partnerI
   const steps = ['บันทึกผล', 'Feedback 7P', 'สรุปและติดตาม'];
 
   const setP = (k: SevenP, patch: Partial<PState>) => setPs((s) => ({ ...s, [k]: { ...s[k], ...patch } }));
+  const restore = (st: PState): PState => ({ ...(st.aiPrev ?? EMPTY_P), ai: false });
+  const pendingAI = SEVEN_P.filter((k) => ps[k].ai);
+
+  /**
+   * AI suggestion: each category gets only the clause(s) that mention it.
+   * Categories the user already set by hand are never overwritten. Re-running replaces earlier AI suggestions only.
+   */
   const runAI = () => {
     const sug = suggest7P(summary);
-    if (!sug.length) { setAiMsg('นัดโตะยังจับหมวดจากข้อความนี้ไม่ได้ กรุณาเลือกเอง'); return; }
+    const manual = SEVEN_P.filter((k) => !ps[k].ai && ps[k].rating !== 'skip');
     setPs((s) => {
       const n = { ...s };
-      for (const x of sug) n[x.category] = { ...n[x.category], rating: x.sentiment, ai: true, detail: n[x.category].detail || summary.split(/\n/)[0].slice(0, 140) };
+      for (const k of SEVEN_P) if (n[k].ai) n[k] = restore(n[k]); // drop previous AI suggestions
+      for (const x of sug) {
+        if (manual.includes(x.category)) continue;
+        const prev = { ...n[x.category] };
+        delete prev.aiPrev;
+        n[x.category] = { ...prev, rating: x.sentiment, ai: true, detail: x.clauses.join(' / ').slice(0, 200), aiPrev: prev };
+      }
       return n;
     });
-    setAiMsg(`นัดโตะแนะนำ ${sug.length} หมวด: ${sug.map((x) => `${SEVEN_P_LABEL[x.category]} (${SENTIMENT_LABEL[x.sentiment]})`).join(', ')} กรุณาตรวจสอบก่อนบันทึก`);
+    const applied = sug.filter((x) => !manual.includes(x.category));
+    const skipped = sug.filter((x) => manual.includes(x.category));
+    if (!sug.length) { setAiMsg('นัดโตะยังจับหมวดจากข้อความนี้ไม่ได้ กรุณาเลือกเอง'); return; }
+    setAiMsg(`นัดโตะแนะนำ ${applied.length} หมวด: ${applied.map((x) => `${SEVEN_P_LABEL[x.category]} (${SENTIMENT_LABEL[x.sentiment]})`).join(', ') || '—'}`
+      + (skipped.length ? ` · ข้ามหมวดที่คุณเลือกเองแล้ว: ${skipped.map((x) => SEVEN_P_LABEL[x.category]).join(', ')}` : '')
+      + ' · กดเลือกระดับเพื่อยืนยัน หรือกด ✕ เพื่อปิดคำแนะนำ');
   };
+  const dismissAI = (k: SevenP) => setPs((s) => ({ ...s, [k]: restore(s[k]) }));
+  const dismissAllAI = () => { setPs((s) => Object.fromEntries(SEVEN_P.map((k) => [k, s[k].ai ? restore(s[k]) : s[k]])) as Record<SevenP, PState>); setAiMsg(''); };
+  const acceptAllAI = () => { setPs((s) => Object.fromEntries(SEVEN_P.map((k) => [k, { ...s[k], ai: false, aiPrev: undefined }])) as Record<SevenP, PState>); setAiMsg(''); };
 
   const next = () => {
     setErr('');
@@ -159,15 +181,34 @@ export default function VisitForm({ partnerId, user, recId, planId }: { partnerI
               <span className="badge good">บันทึกแล้ว {rated.length}/7</span>
             </div>
             <button className="btn secondary block sm" style={{ marginTop: 8 }} onClick={runAI}><Sparkles size={16} /> ให้นัดโตะช่วยจัดหมวดจากสรุปการพูดคุย</button>
-            {aiMsg && <div style={{ marginTop: 8 }}><Note>{aiMsg}</Note></div>}
+            {aiMsg && (
+              <div className="note" style={{ marginTop: 8, flexDirection: 'column', gap: 6 }} role="status">
+                <div className="row" style={{ alignItems: 'flex-start' }}>
+                  <Sparkles size={16} style={{ flex: 'none', marginTop: 2 }} />
+                  <div className="grow">{aiMsg}</div>
+                  <button className="icon-btn" style={{ width: 28, height: 28 }} aria-label="ปิดข้อความ" onClick={() => setAiMsg('')}><X size={14} /></button>
+                </div>
+                {pendingAI.length > 0 && (
+                  <div className="row">
+                    <button className="btn secondary sm" onClick={acceptAllAI}><Check size={14} /> ยอมรับทั้งหมด</button>
+                    <button className="btn ghost sm" onClick={dismissAllAI}><X size={14} /> ยกเลิกคำแนะนำทั้งหมด</button>
+                  </div>
+                )}
+              </div>
+            )}
             <div className="card" style={{ marginTop: 10, padding: '4px 12px' }}>
               {SEVEN_P.map((k) => (
                 <div key={k}>
                   <div className="p7-row">
-                    <div><b className="small">{SEVEN_P_LABEL[k]}</b> <span className="xs muted">({SEVEN_P_THAI[k]})</span>{ps[k].ai && <span className="badge info" style={{ marginLeft: 4 }}>AI แนะนำ</span>}</div>
+                    <div><b className="small">{SEVEN_P_LABEL[k]}</b> <span className="xs muted">({SEVEN_P_THAI[k]})</span>{ps[k].ai && (
+                      <span className="badge info" style={{ marginLeft: 4, paddingRight: 4 }}>AI แนะนำ
+                        <button onClick={() => dismissAI(k)} aria-label={`ปิดคำแนะนำ ${SEVEN_P_LABEL[k]}`} title="ปิดคำแนะนำนี้"
+                          style={{ border: 0, background: 'transparent', color: 'inherit', padding: '0 2px', display: 'inline-flex', cursor: 'pointer' }}><X size={13} /></button>
+                      </span>
+                    )}</div>
                     <div className="seg" role="radiogroup" aria-label={`ประเมิน ${SEVEN_P_LABEL[k]}`}>
                       {(['positive', 'neutral', 'negative', 'skip'] as Rating[]).map((r) => (
-                        <button key={r} role="radio" aria-checked={ps[k].rating === r} className={ps[k].rating === r ? `on-${r}` : ''} onClick={() => setP(k, { rating: r, ai: false })}>
+                        <button key={r} role="radio" aria-checked={ps[k].rating === r} className={ps[k].rating === r ? `on-${r}` : ''} onClick={() => setP(k, { rating: r, ai: false, aiPrev: undefined })}>
                           {r === 'skip' ? 'ไม่ได้คุย' : SENTIMENT_LABEL[r]}
                         </button>
                       ))}
@@ -175,7 +216,7 @@ export default function VisitForm({ partnerId, user, recId, planId }: { partnerI
                   </div>
                   {ps[k].rating !== 'skip' && (
                     <div style={{ padding: '6px 0 10px' }}>
-                      <input className="input" placeholder={`รายละเอียดเรื่อง ${SEVEN_P_LABEL[k]}`} value={ps[k].detail} onChange={(ev) => setP(k, { detail: ev.target.value })} aria-label={`รายละเอียด ${SEVEN_P_LABEL[k]}`} />
+                      <input className="input" placeholder={`รายละเอียดเรื่อง ${SEVEN_P_LABEL[k]}`} value={ps[k].detail} onChange={(ev) => setP(k, { detail: ev.target.value, ai: false, aiPrev: undefined })} aria-label={`รายละเอียด ${SEVEN_P_LABEL[k]}`} />
                       {ps[k].rating === 'negative' && (
                         <div className="row" style={{ marginTop: 6 }}>
                           <span className="small">ความรุนแรง</span>

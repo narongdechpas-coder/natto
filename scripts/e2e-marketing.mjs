@@ -93,6 +93,18 @@ await page.getByRole('button', { name: /ให้นัดโตะช่วย�
 await shot('05-visit-7p');
 t = await text();
 check('AI suggests Product + Process', t.includes('นัดโตะแนะนำ') && t.includes('Product (ต้องปรับ)') && t.includes('Process (ต้องปรับ)'), t.match(/นัดโตะแนะนำ[^\n]*/)?.[0]);
+// Each AI-filled detail must be its own clause (not the whole note repeated)
+const details = await page.locator('input[aria-label^="รายละเอียด"]').evaluateAll((els) => els.map((e) => e.value));
+check('AI details are per-clause, not duplicated', details.length === 2 && new Set(details).size === 2 && !details.some((d) => d.includes('ลูกค้าย้าย')), JSON.stringify(details));
+// Dismiss one suggestion (Process) → back to "ไม่ได้คุย"
+await page.getByRole('button', { name: 'ปิดคำแนะนำ Process' }).click();
+check('Dismiss single AI suggestion', (await page.locator('[aria-label="ประเมิน Process"] [aria-checked="true"]').innerText()) === 'ไม่ได้คุย');
+// Dismiss all, then re-run and accept all
+await page.getByRole('button', { name: /ยกเลิกคำแนะนำทั้งหมด/ }).click();
+check('Dismiss all AI suggestions', (await page.locator('.badge.good').innerText()).includes('0/7'));
+await page.getByRole('button', { name: /ให้นัดโตะช่วยจัดหมวด/ }).click();
+await page.getByRole('button', { name: /ยอมรับทั้งหมด/ }).click();
+check('Accept all clears AI badges', (await page.locator('text=AI แนะนำ').count()) === 0);
 await page.getByRole('button', { name: 'ถัดไป' }).click();
 await shot('05b-visit-actions');
 const actionValues = await page.locator('input[id^="a"]').evaluateAll((els) => els.map((e) => e.value));
