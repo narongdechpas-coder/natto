@@ -163,9 +163,10 @@ export default function RecommendationDetail({ id, user }: { id: string; user: U
           {dec && (
             <div className="note" style={{ marginBottom: 10 }}>
               <CalendarCheck size={16} />
-              <div>ตัดสินใจแล้ว: <b>{DECISION_LABEL[dec.decision]}</b>{dec.reason ? ` · ${DECISION_REASON_LABEL[dec.reason]}` : ''} ({fmtDate(dec.date)}) — เปลี่ยนได้ด้านล่าง</div>
+              <div>ตัดสินใจแล้ว: <b>{DECISION_LABEL[dec.decision]}</b>{dec.reason ? ` · ${DECISION_REASON_LABEL[dec.reason]}` : ''}{dec.comment ? ` · "${dec.comment}"` : ''} ({fmtDate(dec.date)}){user.role === 'marketing' ? ' — เปลี่ยนได้ด้านล่าง' : ''}</div>
             </div>
           )}
+          {user.role === 'marketing' && <>
           <div className="row">
             <button className="btn secondary grow" onClick={() => setSheet('not_now')}>ไม่ใช่ตอนนี้</button>
             <button className="btn primary grow" onClick={prepare}><CalendarCheck size={18} /> เตรียมเข้าพบ</button>
@@ -174,6 +175,8 @@ export default function RecommendationDetail({ id, user }: { id: string; user: U
             <button className="btn ghost grow sm" onClick={planContact}>วางแผนติดต่อ</button>
             <button className="btn ghost grow sm" onClick={() => setSheet('not_relevant')}>ไม่เกี่ยวข้อง</button>
           </div>
+          </>}
+          {user.role !== 'marketing' && !dec && <div className="note">Marketing ผู้ดูแลยังไม่ได้ตัดสินใจกับคำแนะนำนี้</div>}
           <p className="xs muted" style={{ textAlign: 'center' }}>นัดโตะแค่แนะนำ ไม่จองนัดให้อัตโนมัติ</p>
         </div>
       </div>

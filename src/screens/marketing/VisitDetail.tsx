@@ -7,8 +7,8 @@ import {
 import { SEVEN_P } from '../../domain/types';
 import { followUpsOfVisit, isOverdue, partnerById, scopePartners, userById } from '../../state/selectors';
 import { useStore } from '../../state/store';
-import { PageHeader, PartnerIcon, StateView, Tabs } from '../../ui/common';
-import { navigate } from '../../ui/router';
+import { MASCOTS, PageHeader, PartnerIcon, StateView, Tabs } from '../../ui/common';
+import { navigate, useRoute } from '../../ui/router';
 import { TrackBadge } from './History';
 
 type T = 'summary' | 'feedback' | 'plan';
@@ -16,6 +16,7 @@ type T = 'summary' | 'feedback' | 'plan';
 export default function VisitDetail({ id, user }: { id: string; user: User }) {
   const { data, today, setFollowUpStatus, showToast } = useStore();
   const [tab, setTab] = useState<T>('summary');
+  const saved = useRoute().query.get('saved') === '1';
   const v = data.visits.find((x) => x.id === id);
   if (!v) return <><PageHeader title="รายละเอียดการเข้าพบ" backTo="/visits" /><StateView kind="empty" title="ไม่พบรายการนี้" /></>;
   const p = partnerById(data, v.partnerId)!;
@@ -29,6 +30,12 @@ export default function VisitDetail({ id, user }: { id: string; user: User }) {
     <>
       <PageHeader title="รายละเอียดการเข้าพบ" backTo="/visits" />
       <div className="page">
+        {saved && (
+          <div className="card row" style={{ background: 'var(--green-soft)', marginBottom: 10 }}>
+            <img src={MASCOTS.success} alt="" style={{ width: 64 }} />
+            <div className="grow small"><b>บันทึกการเข้าพบเรียบร้อย</b><div>Feedback และงานติดตามจะขึ้นใน Dashboard ของ Manager และผู้บริหาร</div></div>
+          </div>
+        )}
         <div className="card p-card">
           <PartnerIcon type={p.type} />
           <div className="grow">

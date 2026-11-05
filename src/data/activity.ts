@@ -112,6 +112,25 @@ export function generateActivity(partners: Partner[]): ActivityData {
       }
     }
   }
+  // Extra November (month-to-date) visits so Manager/Executive monthly views have activity.
+  // Separate RNG keeps the earlier history (and therefore phase-1 engine results) unchanged.
+  // The demo Marketing user (U-MKT1) is excluded so their November flow stays live for the demo.
+  const rngNov = mulberry32(SEED ^ 0x0110);
+  for (const p of partners.filter((x) => !x.isHero && x.ownerId !== 'U-MKT1')) {
+    if (rngNov() >= 0.5) continue;
+    const date = addDays('2026-11-02', Math.floor(rngNov() * 18));
+    const id = `V${String(vN++).padStart(4, '0')}`;
+    visits.push({
+      id, partnerId: p.id, marketingId: p.ownerId, date, status: 'visited',
+      outcome: pick(rngNov, ['met_objective', 'met_objective', 'partial', 'not_met'] as const),
+      objective: 'ติดตามคำแนะนำจากนัดโตะ', summary: 'บันทึกสรุปการพูดคุย (ข้อมูลจำลอง)', recommendationId: null,
+    });
+    const nFb = 1 + (rngNov() < 0.5 ? 1 : 0);
+    for (let k = 0; k < nFb; k++) {
+      pushFeedback(id, pick(rngNov, FEEDBACK_TEMPLATES), sevFor(rngNov()), date, addDays(date, Math.round(between(rngNov, 14, 40))), null, null);
+    }
+  }
+
   // A few planned visits after demo today for other users
   const planned = partners.filter((x) => !x.isHero).slice(0, 4);
   planned.forEach((p, i) => {

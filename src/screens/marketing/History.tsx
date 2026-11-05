@@ -24,6 +24,8 @@ export default function History({ user }: { user: User }) {
   const [tab, setTab] = useState<T>((query.get('tab') as T) || 'all');
   const [month, setMonth] = useState('all');
   const [q, setQ] = useState('');
+  const [mk, setMk] = useState('all');
+  const members = data.users.filter((u) => u.role === 'marketing' && (user.role === 'executive' || u.teamId === user.teamId));
   const ids = new Set(scopePartners(data, user).map((p) => p.id));
   const mine = data.visits.filter((v) => ids.has(v.partnerId)).sort((a, b) => b.date.localeCompare(a.date));
   const months = [...new Set(mine.map((v) => v.date.slice(0, 7)))].sort().reverse();
@@ -31,6 +33,7 @@ export default function History({ user }: { user: User }) {
   const list = mine.filter((v) => {
     if (tab !== 'all' && visitTrack(data, v) !== tab) return false;
     if (month !== 'all' && !v.date.startsWith(month)) return false;
+    if (mk !== 'all' && v.marketingId !== mk) return false;
     if (q && !partnerById(data, v.partnerId)!.name.toLowerCase().includes(q.toLowerCase())) return false;
     return true;
   });
@@ -42,7 +45,7 @@ export default function History({ user }: { user: User }) {
 
   return (
     <>
-      <PageHeader title="ประวัติการเข้าพบ" backTo="/" />
+      <PageHeader title={user.role === 'marketing' ? 'ประวัติการเข้าพบ' : user.role === 'manager' ? 'การเข้าพบของทีม' : 'การเข้าพบทั้งองค์กร'} backTo="/" />
       <div className="page">
         <div className="card row" style={{ background: 'linear-gradient(160deg,#fff,var(--sky))' }}>
           <img src={MASCOT} alt="" style={{ width: 64 }} />
@@ -59,6 +62,11 @@ export default function History({ user }: { user: User }) {
           </select>
         </div>
 
+        {user.role !== 'marketing' && (
+          <select className="select" style={{ marginTop: 8 }} value={mk} onChange={(e) => setMk(e.target.value)} aria-label="Marketing">
+            <option value="all">Marketing ทุกคน</option>{members.map((u) => <option key={u.id} value={u.id}>{u.name}</option>)}
+          </select>
+        )}
         <div className="section stack">
           {list.length ? list.map((v) => {
             const p = partnerById(data, v.partnerId)!;
@@ -68,7 +76,7 @@ export default function History({ user }: { user: User }) {
                 <PartnerIcon type={p.type} />
                 <div className="grow">
                   <div className="row between"><span className="p-name">{p.name}</span><TrackBadge v={v} /></div>
-                  <div className="small muted">{v.status === 'planned' ? 'แผนเข้าพบ' : 'เข้าพบ'} {fmtDate(v.date)} · {v.objective}</div>
+                  <div className="small muted">{v.status === 'planned' ? 'แผนเข้าพบ' : 'เข้าพบ'} {fmtDate(v.date)} · {v.objective}{user.role !== 'marketing' ? ` · ${data.users.find((u) => u.id === v.marketingId)!.name}` : ''}</div>
                   {tags.length > 0 && (
                     <div className="row" style={{ flexWrap: 'wrap', gap: 4, marginTop: 4 }}>
                       {tags.map((f) => <span key={f.id} className={`badge ${f.sentiment === 'negative' ? 'bad' : f.sentiment === 'positive' ? 'good' : 'neutral'}`}>{SEVEN_P_LABEL[f.category]}</span>)}

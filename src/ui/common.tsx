@@ -7,6 +7,14 @@ import { PRIORITY_LABEL, fmtDate } from '../domain/labels';
 import { back } from './router';
 
 export const MASCOT = './assets/mascot-natto.webp';
+export const MASCOTS = {
+  default: MASCOT,
+  thinking: './assets/mascot-thinking.webp',
+  empty: './assets/mascot-empty.webp',
+  error: './assets/mascot-error.webp',
+  success: './assets/mascot-success.webp',
+  present: './assets/mascot-present.webp',
+} as const;
 
 export function DemoRibbon() {
   return <div className="demo-ribbon" role="note">DEMO DATA · ข้อมูลจำลองทั้งหมด ไม่ใช่ข้อมูลจริง</div>;
@@ -81,10 +89,11 @@ export function Sheet({ open, onClose, title, children }: { open: boolean; onClo
   );
 }
 
-export function StateView({ kind, title, text, action }: { kind: 'empty' | 'error' | 'loading'; title: string; text?: string; action?: ReactNode }) {
+export function StateView({ kind, title, text, action }: { kind: 'empty' | 'error' | 'loading' | 'success'; title: string; text?: string; action?: ReactNode }) {
+  const img = kind === 'loading' ? MASCOTS.thinking : MASCOTS[kind];
   return (
     <div className="state" role={kind === 'error' ? 'alert' : 'status'}>
-      <img src={MASCOT} alt="" style={kind === 'error' ? { filter: 'grayscale(.6)' } : undefined} />
+      <img src={img} alt="" />
       <h3>{title}</h3>
       {text && <p className="small" style={{ margin: '0 0 12px' }}>{text}</p>}
       {action}
@@ -95,6 +104,7 @@ export function StateView({ kind, title, text, action }: { kind: 'empty' | 'erro
 export function SkeletonList({ n = 3 }: { n?: number }) {
   return (
     <div className="stack" aria-busy="true" aria-label="กำลังโหลด">
+      <div className="row" style={{ justifyContent: 'center' }}><img src={MASCOTS.thinking} alt="" style={{ width: 72 }} /><span className="small muted">นัดโตะกำลังวิเคราะห์ข้อมูล...</span></div>
       {Array.from({ length: n }, (_, i) => <div key={i} className="skeleton" style={{ height: 86 }} />)}
     </div>
   );
@@ -114,7 +124,7 @@ export class ErrorBoundary extends Component<{ children: ReactNode }, { err: boo
   }
 }
 
-const NAV = [
+const NAV: NavItem[] = [
   { to: '/', label: 'หน้าหลัก', icon: Home, match: (p: string) => p === '/' },
   { to: '/recs', label: 'แนะนำ', icon: Target, match: (p: string) => p.startsWith('/recs') || p.startsWith('/scenario') || p.startsWith('/partner') },
   { to: '/visits', label: 'เข้าพบ', icon: CalendarDays, match: (p: string) => p.startsWith('/visit') },
@@ -122,10 +132,11 @@ const NAV = [
   { to: '/profile', label: 'โปรไฟล์', icon: UserIcon, match: (p: string) => p.startsWith('/profile') },
 ];
 
-export function BottomNav({ path }: { path: string }) {
+export interface NavItem { to: string; label: string; icon: typeof Home; match: (p: string) => boolean }
+export function BottomNav({ path, items = NAV, className = '' }: { path: string; items?: NavItem[]; className?: string }) {
   return (
-    <nav className="bottom-nav" aria-label="เมนูหลัก">
-      {NAV.map((n) => {
+    <nav className={`bottom-nav ${className}`} aria-label="เมนูหลัก" style={{ gridTemplateColumns: `repeat(${items.length}, 1fr)` }}>
+      {items.map((n) => {
         const I = n.icon;
         const active = n.match(path);
         return (

@@ -100,7 +100,7 @@ export default function VisitForm({ partnerId, user, recId, planId }: { partnerI
       saveVisit({ visit: { partnerId: p.id, marketingId: p.ownerId, date: newDate, status: 'planned', outcome: null, objective: plan?.objective || 'นัดใหม่หลังเลื่อน', summary: '', recommendationId: rec?.id ?? null }, feedback: [], actions: [] });
     }
     showToast('บันทึกการเข้าพบแล้ว ข้อมูลจะขึ้นใน Dashboard ของ Manager');
-    navigate(`/visits/${id}`);
+    navigate(`/visits/${id}?saved=1`);
   };
 
   return (

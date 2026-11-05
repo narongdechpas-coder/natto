@@ -6,7 +6,7 @@ import { SIGNAL_LABEL, fmtDate, fmtMonth } from '../../domain/labels';
 import { PRIORITY_BANDS, ACTIVE_BANDS, SIGNAL_WEIGHTS } from '../../engine/config';
 import { CURRENT_BATCH, partnerById, recsFor, scopePartners } from '../../state/selectors';
 import { useStore } from '../../state/store';
-import { Chips, MASCOT, PageHeader, Sheet, StateView } from '../../ui/common';
+import { Chips, MASCOTS, PageHeader, Sheet, StateView } from '../../ui/common';
 import { RecCard } from './shared';
 
 type F = 'all' | Priority | 'opportunity';
@@ -70,7 +70,7 @@ export default function Recommendations({ user }: { user: User }) {
         </div>
 
         <div className="card row section">
-          <img src={MASCOT} alt="" style={{ width: 54 }} />
+          <img src={MASCOTS.thinking} alt="" style={{ width: 54 }} />
           <div className="grow small">
             นัดโตะคัดเลือกจากข้อมูลรายเดือน{asOf ? ` ณ ${fmtDate(asOf)}` : ''}
             <div className="xs muted">นัดโตะแค่แนะนำ ไม่จองนัดให้อัตโนมัติ</div>

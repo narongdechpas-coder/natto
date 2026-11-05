@@ -41,6 +41,7 @@ export default function PartnerIntel({ id, user, tab }: { id: string; user: User
     return <><PageHeader title="ข้อมูลคู่ค้า" /><StateView kind="error" title="ไม่มีสิทธิ์เข้าถึง" text="คู่ค้านี้ไม่อยู่ในขอบเขตข้อมูลของคุณ" /></>;
   }
   const rows = seriesOf(data, p.id);
+  const readOnly = user.role !== 'marketing';
   const k = partnerKpis(data, p.id);
   const last = lastVisit(data, p.id, today);
   const openFu = openFollowUpsForPartner(data, p.id);
@@ -228,6 +229,8 @@ export default function PartnerIntel({ id, user, tab }: { id: string; user: User
               </div>
             )) : <div className="card"><StateView kind="empty" title="รอบนี้ไม่มีประเด็นที่ระบบแนะนำ" text="คุณเพิ่มประเด็นที่ต้องการคุยเองได้ด้านล่าง" /></div>}
 
+            {readOnly && <div className="note">มุมมองของ {user.role === 'manager' ? 'Manager' : 'ผู้บริหาร'} อ่านอย่างเดียว การเตรียมเข้าพบและบันทึกผลทำโดย Marketing ผู้ดูแล</div>}
+            {!readOnly && <>
             <div className="card">
               <div className="row between"><div className="chart-title"><ClipboardEdit size={15} style={{ verticalAlign: -2 }} /> ประเด็นที่จะคุย (แก้ไขได้)</div></div>
               <p className="xs muted" style={{ marginTop: 2 }}>นัดโตะอาจไม่รู้บริบทล่าสุดของความสัมพันธ์ ปรับให้ตรงกับสถานการณ์จริงได้</p>
@@ -256,14 +259,15 @@ export default function PartnerIntel({ id, user, tab }: { id: string; user: User
               <button className="btn secondary block" onClick={savePlan}>บันทึกแผนเข้าพบ</button>
               <p className="xs muted" style={{ textAlign: 'center', marginBottom: 0 }}>บันทึกเป็นแผนของคุณเท่านั้น นัดโตะไม่ได้นัดกับคู่ค้าให้</p>
             </div>
+            </>}
           </div>
         )}
 
-        <div className="section">
+        {!readOnly && <div className="section">
           <button className="btn primary block" onClick={() => navigate(`/visit/new/${p.id}${rec ? `?rec=${rec.id}` : ''}${plannedVisit ? `${rec ? '&' : '?'}plan=${plannedVisit.id}` : ''}`)}>
             บันทึกผลการเข้าพบ
           </button>
-        </div>
+        </div>}
       </div>
     </>
   );
