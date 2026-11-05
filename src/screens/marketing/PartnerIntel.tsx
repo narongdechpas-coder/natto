@@ -15,9 +15,12 @@ import { useStore } from '../../state/store';
 import { BarChart, Legend, LineChart, SERIES, ShareBar } from '../../ui/charts';
 import { AsOf, Note, PageHeader, PartnerIcon, PriorityBadge, StateView, Tabs } from '../../ui/common';
 import { navigate } from '../../ui/router';
+import { ThaiDateInput } from '../../ui/ThaiDateInput';
 import { useExplanation } from './shared';
 
 type T = 'overview' | 'perf' | 'mix' | 'vehicle' | 'talk';
+// 24-hour Thai time slots (08:00–18:00, every 30 minutes) — independent of browser locale
+const TIME_SLOTS = Array.from({ length: 21 }, (_, i) => `${String(8 + Math.floor(i / 2)).padStart(2, '0')}:${i % 2 ? '30' : '00'}`);
 
 export default function PartnerIntel({ id, user, tab }: { id: string; user: User; tab: string | null }) {
   const { data, today, saveVisit, setTalkingPoints, overlay, showToast } = useStore();
@@ -250,8 +253,12 @@ export default function PartnerIntel({ id, user, tab }: { id: string; user: User
               <div className="chart-title"><CalendarPlus size={15} style={{ verticalAlign: -2 }} /> แผนการเข้าพบ</div>
               {plannedVisit && <p className="small" style={{ margin: '4px 0' }}>มีแผนอยู่แล้ว: {fmtDate(plannedVisit.date)} · {plannedVisit.objective} (บันทึกใหม่จะทับแผนเดิม)</p>}
               <div className="row" style={{ marginTop: 8 }}>
-                <div className="field grow"><label htmlFor="pdate">วันที่</label><input id="pdate" type="date" className="input" min={today} value={plan.date} onChange={(ev) => setPlan({ ...plan, date: ev.target.value })} /></div>
-                <div className="field" style={{ width: 110 }}><label htmlFor="ptime">เวลา</label><input id="ptime" type="time" className="input" value={plan.time} onChange={(ev) => setPlan({ ...plan, time: ev.target.value })} /></div>
+                <div className="field grow"><label htmlFor="pdate">วันที่</label><ThaiDateInput id="pdate" min={today} today={today} value={plan.date} onChange={(nv) => setPlan({ ...plan, date: nv })} /></div>
+                <div className="field" style={{ width: 130 }}><label htmlFor="ptime">เวลา</label>
+                  <select id="ptime" className="select" value={plan.time} onChange={(ev) => setPlan({ ...plan, time: ev.target.value })}>
+                    {TIME_SLOTS.map((t) => <option key={t} value={t}>{t} น.</option>)}
+                  </select>
+                </div>
               </div>
               <div className="field"><label htmlFor="patt">ผู้เข้าร่วม</label><input id="patt" className="input" placeholder="เช่น Marketing, UW, Product" value={plan.attendees} onChange={(ev) => setPlan({ ...plan, attendees: ev.target.value })} /></div>
               <div className="field"><label htmlFor="pobj">วัตถุประสงค์</label><textarea id="pobj" className="textarea" style={{ minHeight: 64 }} value={plan.objective} onChange={(ev) => setPlan({ ...plan, objective: ev.target.value })} /></div>

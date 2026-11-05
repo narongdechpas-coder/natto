@@ -9,6 +9,7 @@ import { suggest7P } from '../../engine/classify';
 import { currentRecForPartner, partnerById, scopePartners } from '../../state/selectors';
 import { useStore } from '../../state/store';
 import { Note, PageHeader, PartnerIcon, PriorityBadge, StateView } from '../../ui/common';
+import { ThaiDateInput } from '../../ui/ThaiDateInput';
 import { navigate } from '../../ui/router';
 import { useExplanation } from './shared';
 
@@ -148,7 +149,7 @@ export default function VisitForm({ partnerId, user, recId, planId }: { partnerI
 
         {step === 0 && (
           <div className="section">
-            <div className="field"><label htmlFor="vdate">วันที่เข้าพบ</label><input id="vdate" type="date" className="input" max={today} value={date} onChange={(ev) => setDate(ev.target.value)} /></div>
+            <div className="field"><label htmlFor="vdate">วันที่เข้าพบ</label><ThaiDateInput id="vdate" max={today} today={today} value={date} onChange={setDate} /></div>
             <div className="field"><label>สถานะการเข้าพบ</label>
               {(['visited', 'rescheduled', 'not_visited'] as VisitStatus[]).map((s) => (
                 <button key={s} className={`option ${status === s ? 'active' : ''}`} aria-pressed={status === s} onClick={() => setStatus(s)}>
@@ -165,7 +166,7 @@ export default function VisitForm({ partnerId, user, recId, planId }: { partnerI
               </div>
             )}
             {status === 'rescheduled' && (
-              <div className="field"><label htmlFor="ndate">วันนัดใหม่ (ถ้ามี)</label><input id="ndate" type="date" className="input" min={today} value={newDate} onChange={(ev) => setNewDate(ev.target.value)} /></div>
+              <div className="field"><label htmlFor="ndate">วันนัดใหม่ (ถ้ามี)</label><ThaiDateInput id="ndate" min={today} today={today} value={newDate} onChange={setNewDate} allowClear placeholder="ยังไม่กำหนด" /></div>
             )}
             <div className="field"><label htmlFor="sum">{visited ? 'สรุปการพูดคุย' : 'เหตุผล / รายละเอียด'}</label>
               <textarea id="sum" className="textarea" placeholder={visited ? 'เช่น Partner บอกว่าเบี้ยประเภท 1 แพงกว่าคู่แข่ง และออกกรมธรรม์ช้า' : 'เช่น Partner ขอเลื่อนเพราะติดประชุม'} value={summary} onChange={(ev) => setSummary(ev.target.value)} />
@@ -250,7 +251,7 @@ export default function VisitForm({ partnerId, user, recId, planId }: { partnerI
                       {OWNERS.map((o) => <option key={o}>{o}</option>)}
                     </select>
                   </div>
-                  <div className="field grow"><label htmlFor={`d${i}`}>กำหนดเสร็จ</label><input id={`d${i}`} type="date" className="input" value={a.dueDate} onChange={(ev) => setActions(actions.map((x, j) => (j === i ? { ...x, dueDate: ev.target.value } : x)))} /></div>
+                  <div className="field grow"><label htmlFor={`d${i}`}>กำหนดเสร็จ</label><ThaiDateInput id={`d${i}`} min={date} today={today} value={a.dueDate} onChange={(nv) => setActions(actions.map((x, j) => (j === i ? { ...x, dueDate: nv } : x)))} /></div>
                 </div>
                 <button className="btn ghost sm" onClick={() => setActions(actions.filter((_, j) => j !== i))}><Trash2 size={15} /> ลบ</button>
               </div>

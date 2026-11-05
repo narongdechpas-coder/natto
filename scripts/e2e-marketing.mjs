@@ -81,6 +81,13 @@ check('M04 vehicle table shows make/model', t.includes('Make / Model'));
 await page.getByRole('tab', { name: 'ประเด็นพูดคุย' }).click();
 await page.getByRole('button', { name: /บันทึกแผนเข้าพบ/ }).click();
 check('Plan validation', (await text()).includes('กรุณาเลือกวันที่เข้าพบ'));
+// Thai date picker: past days disabled, selected date shown as day-month-year in Thai
+await page.locator('#pdate').click();
+check('Date picker shows Thai month', (await text()).includes('พฤศจิกายน 2026'));
+check('Date picker disables past days', await page.getByRole('button', { name: '19 พ.ย. 2026', exact: true }).isDisabled());
+await page.getByRole('button', { name: '25 พ.ย. 2026', exact: true }).click();
+check('Picked date displayed in Thai format', (await page.locator('#pdate').innerText()).includes('25 พ.ย. 2026'), await page.locator('#pdate').innerText());
+check('Time shown as 24h Thai', (await page.locator('#ptime option:checked').innerText()) === '10:00 น.');
 
 // Record visit
 await page.getByRole('button', { name: 'บันทึกผลการเข้าพบ' }).click();
