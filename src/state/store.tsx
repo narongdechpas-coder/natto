@@ -15,12 +15,15 @@ export interface Overlay {
   feedback: Feedback[];
   followUps: FollowUp[]; // new or edited
   opportunities: Opportunity[];
-  talkingPoints: Record<string, string[]>; // key: recommendationId or partnerId → edited topics
+  /** key: recommendationId or partnerId → the talking points the user kept/edited/added (single source of truth). */
+  talkingPoints: Record<string, TalkingItem[]>;
 }
 
 const EMPTY: Overlay = { decisions: [], visits: [], feedback: [], followUps: [], opportunities: [], talkingPoints: {} };
 
 export interface Session { userId: string | null }
+/** id = 'sig:<signal>' for a system-suggested point, 'custom:<n>' for one the user added. */
+export interface TalkingItem { id: string; topic: string }
 
 function load<T>(key: string, fallback: T): T {
   try {
@@ -51,7 +54,8 @@ export interface Store {
   decide: (d: Omit<RecommendationDecision, 'date' | 'marketingId'>) => void;
   saveVisit: (input: SaveVisitInput) => string;
   setFollowUpStatus: (id: string, status: FollowUpStatus) => void;
-  setTalkingPoints: (key: string, topics: string[]) => void;
+  setTalkingPoints: (key: string, items: TalkingItem[]) => void;
+  resetTalkingPoints: (key: string) => void;
   reset: () => void;
   toast: string | null;
   showToast: (msg: string) => void;
@@ -139,8 +143,12 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     });
   }, [base]);
 
-  const setTalkingPoints: Store['setTalkingPoints'] = useCallback((key, topics) => {
-    setOverlay((o) => ({ ...o, talkingPoints: { ...o.talkingPoints, [key]: topics } }));
+  const setTalkingPoints: Store['setTalkingPoints'] = useCallback((key, items) => {
+    setOverlay((o) => ({ ...o, talkingPoints: { ...o.talkingPoints, [key]: items } }));
+  }, []);
+
+  const resetTalkingPoints = useCallback((key: string) => {
+    setOverlay((o) => { const tp = { ...o.talkingPoints }; delete tp[key]; return { ...o, talkingPoints: tp }; });
   }, []);
 
   const reset = useCallback(() => {
@@ -150,7 +158,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
   const value: Store = {
     base, data, today: DEMO_TODAY, session, overlay,
-    login, logout, decide, saveVisit, setFollowUpStatus, setTalkingPoints, reset,
+    login, logout, decide, saveVisit, setFollowUpStatus, setTalkingPoints, resetTalkingPoints, reset,
     toast, showToast: setToast,
   };
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;

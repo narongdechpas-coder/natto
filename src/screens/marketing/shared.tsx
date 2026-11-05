@@ -111,3 +111,20 @@ export function DecisionSheet({ open, onClose, rec, kind }: { open: boolean; onC
     </Sheet>
   );
 }
+
+/**
+ * Visit objective that respects the user's edited talking points:
+ * objective of the first system point still kept, or none if the user removed them all.
+ */
+export function useVisitObjective(r: Recommendation | undefined, partnerId: string): string {
+  const { overlay } = useStore();
+  const e = useExplanation(r);
+  if (!e) return '';
+  const saved = overlay.talkingPoints[r?.id ?? partnerId] as unknown as ({ id: string } | string)[] | undefined;
+  if (!saved) return e.visitObjective;
+  for (const x of saved) {
+    const tp = typeof x === 'string' ? e.talkingPoints.find((t) => t.topic === x) : e.talkingPoints.find((t) => `sig:${t.signal}` === x.id);
+    if (tp) return tp.objective;
+  }
+  return '';
+}

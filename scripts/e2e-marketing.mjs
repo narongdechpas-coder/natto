@@ -88,7 +88,18 @@ await page.getByRole('button', { name: /เตรียมเข้าพบ/ })
 await page.waitForSelector('text=ประเด็นที่ 1');
 await shot('04-partner-talk');
 t = await text();
-check('M04 talking points from signals', t.includes('สาเหตุที่ลูกค้าไม่ต่ออายุ') && t.includes('คำถามแนะนำ'));
+check('M04 talking points from signals', (await page.getByLabel('หัวข้อประเด็นที่ 1').inputValue()) === 'สาเหตุที่ลูกค้าไม่ต่ออายุ' && t.includes('คำถามแนะนำ'));
+// Deleting a talking point removes its whole card (questions included), and restore brings it back
+const cardsBefore = await page.locator('text=/^ประเด็นที่ \\d+$/').count();
+await page.getByRole('button', { name: 'ลบประเด็นที่ 1' }).click();
+const afterDel = await text();
+check('Delete talking point removes its card', (await page.locator('text=/^ประเด็นที่ \\d+$/').count()) === cardsBefore - 1 && !afterDel.includes('ลูกค้าที่ไม่ต่ออายุใน 3 เดือนที่ผ่านมา'), `${cardsBefore} → ${await page.locator('text=/^ประเด็นที่ \\d+$/').count()}`);
+await page.getByRole('button', { name: /เพิ่มประเด็น/ }).click();
+await page.getByLabel(`หัวข้อประเด็นที่ ${cardsBefore}`).fill('เสนอแคมเปญร่วมปลายปี');
+check('Custom talking point added', (await text()).includes('เพิ่มเอง'));
+await page.getByRole('button', { name: /คืนค่าที่ระบบแนะนำ/ }).click();
+const restored = await text();
+check('Restore brings back system points and drops custom', restored.includes('ลูกค้าที่ไม่ต่ออายุใน 3 เดือนที่ผ่านมา') && !restored.includes('เพิ่มเอง') && (await page.locator('text=/^ประเด็นที่ \\d+$/').count()) === cardsBefore);
 for (const tab of ['ภาพรวม', 'Performance', 'Product Mix', 'Vehicle']) {
   await page.getByRole('tab', { name: tab }).click();
   await page.waitForTimeout(100);

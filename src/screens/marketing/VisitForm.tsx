@@ -11,7 +11,7 @@ import { useStore } from '../../state/store';
 import { Note, PageHeader, PartnerIcon, PriorityBadge, StateView } from '../../ui/common';
 import { ThaiDateInput } from '../../ui/ThaiDateInput';
 import { navigate } from '../../ui/router';
-import { useExplanation } from './shared';
+import { useExplanation, useVisitObjective } from './shared';
 
 type Rating = Sentiment | 'skip';
 interface PState { rating: Rating; severity: Severity; detail: string; ai: boolean; aiPrev?: Omit<PState, 'aiPrev'> }
@@ -26,6 +26,7 @@ export default function VisitForm({ partnerId, user, recId, planId }: { partnerI
   const p = partnerById(data, partnerId);
   const rec = recId ? data.recommendations.find((r) => r.id === recId) : currentRecForPartner(data, partnerId);
   const e = useExplanation(rec);
+  const prepObjective = useVisitObjective(rec, partnerId);
   const plan = planId ? data.visits.find((v) => v.id === planId) : undefined;
   const [step, setStep] = useState(0);
   const [date, setDate] = useState(plan && plan.date <= today ? plan.date : today);
@@ -111,7 +112,7 @@ export default function VisitForm({ partnerId, user, recId, planId }: { partnerI
     const id = saveVisit({
       visit: {
         id: plan?.id, partnerId: p.id, marketingId: p.ownerId, date, status, outcome: visited ? outcome : null,
-        objective: plan?.objective || e?.visitObjective || 'เข้าพบคู่ค้า', summary: summary.trim(), recommendationId: rec?.id ?? null,
+        objective: plan?.objective || prepObjective || 'เข้าพบคู่ค้า', summary: summary.trim(), recommendationId: rec?.id ?? null,
       },
       feedback: fbKeys.map((k) => ({
         category: k, sentiment: ps[k].rating as Sentiment, severity: ps[k].rating === 'negative' ? ps[k].severity : null,
@@ -171,7 +172,7 @@ export default function VisitForm({ partnerId, user, recId, planId }: { partnerI
             <div className="field"><label htmlFor="sum">{visited ? 'สรุปการพูดคุย' : 'เหตุผล / รายละเอียด'}</label>
               <textarea id="sum" className="textarea" placeholder={visited ? 'เช่น Partner บอกว่าเบี้ยประเภท 1 แพงกว่าคู่แข่ง และออกกรมธรรม์ช้า' : 'เช่น Partner ขอเลื่อนเพราะติดประชุม'} value={summary} onChange={(ev) => setSummary(ev.target.value)} />
             </div>
-            {e && visited && <Note>เป้าหมายจากการเตรียมเข้าพบ: {plan?.objective || e.visitObjective}</Note>}
+            {e && visited && (plan?.objective || prepObjective) && <Note>เป้าหมายจากการเตรียมเข้าพบ: {plan?.objective || prepObjective}</Note>}
           </div>
         )}
 

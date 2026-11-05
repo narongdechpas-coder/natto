@@ -11,19 +11,19 @@ import { fuelShare, productShare, renewalRate, sumOrNull, totalPremium } from '.
 import {
   currentRecForPartner, isOverdue, lastVisit, openFollowUpsForPartner, partnerById, partnerKpis, scopePartners, seriesOf, userById,
 } from '../../state/selectors';
-import { useStore } from '../../state/store';
+import { useStore, type TalkingItem } from '../../state/store';
 import { BarChart, Legend, LineChart, SERIES, ShareBar } from '../../ui/charts';
 import { AsOf, Note, PageHeader, PartnerIcon, PriorityBadge, StateView, Tabs } from '../../ui/common';
 import { navigate } from '../../ui/router';
 import { ThaiDateInput } from '../../ui/ThaiDateInput';
-import { useExplanation } from './shared';
+import { useExplanation, useVisitObjective } from './shared';
 
 type T = 'overview' | 'perf' | 'mix' | 'vehicle' | 'talk';
 // 24-hour Thai time slots (08:00–18:00, every 30 minutes) — independent of browser locale
 const TIME_SLOTS = Array.from({ length: 21 }, (_, i) => `${String(8 + Math.floor(i / 2)).padStart(2, '0')}:${i % 2 ? '30' : '00'}`);
 
 export default function PartnerIntel({ id, user, tab }: { id: string; user: User; tab: string | null }) {
-  const { data, today, saveVisit, setTalkingPoints, overlay, showToast } = useStore();
+  const { data, today, saveVisit, setTalkingPoints, resetTalkingPoints, overlay, showToast } = useStore();
   const p = partnerById(data, id);
   const [t, setT] = useState<T>((tab as T) || 'overview');
   const rec = currentRecForPartner(data, id);
@@ -34,9 +34,17 @@ export default function PartnerIntel({ id, user, tab }: { id: string; user: User
   }, [data]);
   const [fuelFilter, setFuelFilter] = useState<'all' | FuelType>('all');
   const tpKey = rec?.id ?? id;
-  const baseTopics = e?.talkingPoints.map((x) => x.topic) ?? [];
-  const [topics, setTopics] = useState<string[]>(overlay.talkingPoints[tpKey] ?? baseTopics);
-  const [plan, setPlan] = useState({ date: '', time: '10:00', attendees: '', objective: e?.visitObjective ?? '' });
+  // One list drives both the cards and the visit plan. Default = system suggestions; once edited, the saved list.
+  const baseItems: TalkingItem[] = e?.talkingPoints.map((x) => ({ id: `sig:${x.signal}`, topic: x.topic })) ?? [];
+  const saved = overlay.talkingPoints[tpKey] as unknown as (TalkingItem | string)[] | undefined;
+  const items: TalkingItem[] = saved
+    ? saved.map((x, i) => (typeof x === 'string' // migrate the earlier string-only format
+      ? (baseItems.find((b) => b.topic === x) ?? { id: `custom:${i}`, topic: x })
+      : x))
+    : baseItems;
+  const topics = items.map((x) => x.topic).filter((x) => x.trim());
+  const defaultObjective = useVisitObjective(rec, id);
+  const [plan, setPlan] = useState({ date: '', time: '10:00', attendees: '', objective: defaultObjective });
   const [planErr, setPlanErr] = useState('');
 
   if (!p) return <><PageHeader title="ข้อมูลคู่ค้า" /><StateView kind="empty" title="ไม่พบคู่ค้า" /></>;
@@ -63,7 +71,8 @@ export default function PartnerIntel({ id, user, tab }: { id: string; user: User
   };
   const segs = data.vehicleSegments.filter((s) => s.partnerId === p.id && (fuelFilter === 'all' || s.fuel === fuelFilter)).sort((a, b) => b.count - a.count);
 
-  const saveTopics = (next: string[]) => { setTopics(next); setTalkingPoints(tpKey, next); };
+  const saveItems = (next: TalkingItem[]) => setTalkingPoints(tpKey, next);
+  const removed = baseItems.filter((b) => !items.some((x) => x.id === b.id));
   const savePlan = () => {
     if (!plan.date) { setPlanErr('กรุณาเลือกวันที่เข้าพบ'); return; }
     if (plan.date < today) { setPlanErr('วันที่เข้าพบต้องไม่ย้อนหลัง'); return; }
@@ -221,32 +230,41 @@ export default function PartnerIntel({ id, user, tab }: { id: string; user: User
 
         {t === 'talk' && (
           <div className="section stack">
-            {e && e.talkingPoints.length ? e.talkingPoints.map((tp, i) => (
-              <div key={tp.topic} className="card">
-                <div className="row"><span className="badge info">ประเด็นที่ {i + 1}</span><b className="grow">{tp.topic}</b></div>
-                <div className="small" style={{ marginTop: 6 }}><span className="muted">สัญญาณ:</span> {tp.signalText}</div>
-                <div className="small"><span className="muted">นัยสำคัญ:</span> {tp.insight}</div>
-                <div className="small" style={{ marginTop: 6 }}><b><MessageCircle size={14} style={{ verticalAlign: -2 }} /> คำถามแนะนำ</b></div>
-                <ul className="small" style={{ margin: '2px 0', paddingLeft: 18 }}>{tp.questions.map((q) => <li key={q}>{q}</li>)}</ul>
-                <div className="small"><Target size={14} style={{ verticalAlign: -2 }} /> <span className="muted">เป้าหมายการเข้าพบ:</span> {tp.objective}</div>
-              </div>
-            )) : <div className="card"><StateView kind="empty" title="รอบนี้ไม่มีประเด็นที่ระบบแนะนำ" text="คุณเพิ่มประเด็นที่ต้องการคุยเองได้ด้านล่าง" /></div>}
-
             {readOnly && <div className="note">มุมมองของ {user.role === 'manager' ? 'Manager' : 'ผู้บริหาร'} อ่านอย่างเดียว การเตรียมเข้าพบและบันทึกผลทำโดย Marketing ผู้ดูแล</div>}
-            {!readOnly && <>
-            <div className="card">
-              <div className="row between"><div className="chart-title"><ClipboardEdit size={15} style={{ verticalAlign: -2 }} /> ประเด็นที่จะคุย (แก้ไขได้)</div></div>
-              <p className="xs muted" style={{ marginTop: 2 }}>นัดโตะอาจไม่รู้บริบทล่าสุดของความสัมพันธ์ ปรับให้ตรงกับสถานการณ์จริงได้</p>
-              {topics.map((tp, i) => (
-                <div key={i} className="row" style={{ marginBottom: 6 }}>
-                  <input className="input" value={tp} aria-label={`ประเด็นที่ ${i + 1}`} onChange={(ev) => saveTopics(topics.map((x, j) => (j === i ? ev.target.value : x)))} />
-                  <button className="icon-btn" aria-label="ลบประเด็น" onClick={() => saveTopics(topics.filter((_, j) => j !== i))}><Trash2 size={16} /></button>
+            {!readOnly && (
+              <p className="xs muted" style={{ margin: 0 }}><ClipboardEdit size={13} style={{ verticalAlign: -2 }} /> แก้หัวข้อ ลบ หรือเพิ่มประเด็นได้ นัดโตะอาจไม่รู้บริบทล่าสุดของความสัมพันธ์</p>
+            )}
+            {items.length === 0 && (
+              <div className="card"><StateView kind="empty" title={baseItems.length ? 'ลบประเด็นทั้งหมดแล้ว' : 'รอบนี้ไม่มีประเด็นที่ระบบแนะนำ'} text="กด เพิ่มประเด็น เพื่อใส่เรื่องที่ต้องการคุยเอง" /></div>
+            )}
+            {items.map((it, i) => {
+              const tp = it.id.startsWith('sig:') ? e?.talkingPoints.find((x) => `sig:${x.signal}` === it.id) : undefined;
+              return (
+                <div key={it.id} className="card">
+                  <div className="row">
+                    <span className="badge info">ประเด็นที่ {i + 1}</span>
+                    {!tp && <span className="badge neutral">เพิ่มเอง</span>}
+                    <span className="grow" />
+                    {!readOnly && <button className="icon-btn" style={{ width: 32, height: 32 }} aria-label={`ลบประเด็นที่ ${i + 1}`} onClick={() => saveItems(items.filter((x) => x.id !== it.id))}><Trash2 size={15} /></button>}
+                  </div>
+                  {readOnly ? <b style={{ display: 'block', marginTop: 6 }}>{it.topic}</b> : (
+                    <input className="input" style={{ marginTop: 6, fontWeight: 700 }} value={it.topic} placeholder="หัวข้อที่จะคุย" aria-label={`หัวข้อประเด็นที่ ${i + 1}`}
+                      onChange={(ev) => saveItems(items.map((x) => (x.id === it.id ? { ...x, topic: ev.target.value } : x)))} />
+                  )}
+                  {tp && <>
+                    <div className="small" style={{ marginTop: 6 }}><span className="muted">สัญญาณ:</span> {tp.signalText}</div>
+                    <div className="small"><span className="muted">นัยสำคัญ:</span> {tp.insight}</div>
+                    <div className="small" style={{ marginTop: 6 }}><b><MessageCircle size={14} style={{ verticalAlign: -2 }} /> คำถามแนะนำ</b></div>
+                    <ul className="small" style={{ margin: '2px 0', paddingLeft: 18 }}>{tp.questions.map((q) => <li key={q}>{q}</li>)}</ul>
+                    <div className="small"><Target size={14} style={{ verticalAlign: -2 }} /> <span className="muted">เป้าหมายการเข้าพบ:</span> {tp.objective}</div>
+                  </>}
                 </div>
-              ))}
-              <div className="row">
-                <button className="btn secondary sm" onClick={() => saveTopics([...topics, ''])}><Plus size={15} /> เพิ่มประเด็น</button>
-                {overlay.talkingPoints[tpKey] && <button className="btn ghost sm" onClick={() => saveTopics(baseTopics)}>คืนค่าที่ระบบแนะนำ</button>}
-              </div>
+              );
+            })}
+            {!readOnly && <>
+            <div className="row" style={{ flexWrap: 'wrap' }}>
+              <button className="btn secondary sm" onClick={() => saveItems([...items, { id: `custom:${Date.now().toString(36)}`, topic: '' }])}><Plus size={15} /> เพิ่มประเด็น</button>
+              {saved && <button className="btn ghost sm" onClick={() => resetTalkingPoints(tpKey)}>คืนค่าที่ระบบแนะนำ{removed.length ? ` (${removed.length} ประเด็นที่ลบไป)` : ''}</button>}
             </div>
 
             <div className="card" style={{ background: 'var(--cream)' }}>
