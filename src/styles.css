@@ -315,3 +315,15 @@ details.disclose summary::-webkit-details-marker { display: none; }
   .mgmt-shell + .bottom-nav, .mgmt-bottom { display: none; }
   .mgmt-shell { padding-bottom: 32px; }
 }
+
+/* ---------- 7P blocks: one section per category, left border shows the rating ---------- */
+.p7-list { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
+.p7-block { background: var(--surface); border-radius: 14px; box-shadow: var(--shadow); border-left: 5px solid #d5dbe8; padding: 10px 12px; }
+.p7-block.p7-positive { border-left-color: var(--green); }
+.p7-block.p7-neutral { border-left-color: var(--gold); }
+.p7-block.p7-negative { border-left-color: var(--red); }
+.p7-block:not(.p7-skip) { padding-bottom: 12px; }
+.p7-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+.p7-name { font-size: 15px; color: var(--navy); min-width: 0; }
+.p7-body { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--line); }
+.p7-label { display: block; font-size: 12px; font-weight: 700; color: var(--ink-2); margin-bottom: 4px; }

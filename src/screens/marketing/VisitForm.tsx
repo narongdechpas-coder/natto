@@ -196,16 +196,19 @@ export default function VisitForm({ partnerId, user, recId, planId }: { partnerI
                 )}
               </div>
             )}
-            <div className="card" style={{ marginTop: 10, padding: '4px 12px' }}>
+            <div className="p7-list">
               {SEVEN_P.map((k) => (
-                <div key={k}>
-                  <div className="p7-row">
-                    <div><b className="small">{SEVEN_P_LABEL[k]}</b> <span className="xs muted">({SEVEN_P_THAI[k]})</span>{ps[k].ai && (
-                      <span className="badge info" style={{ marginLeft: 4, paddingRight: 4 }}>AI แนะนำ
-                        <button onClick={() => dismissAI(k)} aria-label={`ปิดคำแนะนำ ${SEVEN_P_LABEL[k]}`} title="ปิดคำแนะนำนี้"
-                          style={{ border: 0, background: 'transparent', color: 'inherit', padding: '0 2px', display: 'inline-flex', cursor: 'pointer' }}><X size={13} /></button>
-                      </span>
-                    )}</div>
+                <section key={k} className={`p7-block p7-${ps[k].rating}`} aria-label={`หมวด ${SEVEN_P_LABEL[k]}`}>
+                  <div className="p7-head">
+                    <div className="p7-name">
+                      <b>{SEVEN_P_LABEL[k]}</b> <span className="xs muted">{SEVEN_P_THAI[k]}</span>
+                      {ps[k].ai && (
+                        <span className="badge info" style={{ marginLeft: 6, paddingRight: 4 }}>AI แนะนำ
+                          <button onClick={() => dismissAI(k)} aria-label={`ปิดคำแนะนำ ${SEVEN_P_LABEL[k]}`} title="ปิดคำแนะนำนี้"
+                            style={{ border: 0, background: 'transparent', color: 'inherit', padding: '0 2px', display: 'inline-flex', cursor: 'pointer' }}><X size={13} /></button>
+                        </span>
+                      )}
+                    </div>
                     <div className="seg" role="radiogroup" aria-label={`ประเมิน ${SEVEN_P_LABEL[k]}`}>
                       {(['positive', 'neutral', 'negative', 'skip'] as Rating[]).map((r) => (
                         <button key={r} role="radio" aria-checked={ps[k].rating === r} className={ps[k].rating === r ? `on-${r}` : ''} onClick={() => setP(k, { rating: r, ai: false, aiPrev: undefined })}>
@@ -215,19 +218,21 @@ export default function VisitForm({ partnerId, user, recId, planId }: { partnerI
                     </div>
                   </div>
                   {ps[k].rating !== 'skip' && (
-                    <div style={{ padding: '6px 0 10px' }}>
-                      <input className="input" placeholder={`รายละเอียดเรื่อง ${SEVEN_P_LABEL[k]}`} value={ps[k].detail} onChange={(ev) => setP(k, { detail: ev.target.value, ai: false, aiPrev: undefined })} aria-label={`รายละเอียด ${SEVEN_P_LABEL[k]}`} />
+                    <div className="p7-body">
+                      <label className="p7-label" htmlFor={`d-${k}`}>รายละเอียด{ps[k].rating === 'negative' ? ' (จำเป็น)' : ''}</label>
+                      <textarea id={`d-${k}`} className="textarea" rows={2} style={{ minHeight: 60 }} placeholder={`Partner พูดถึงเรื่อง ${SEVEN_P_LABEL[k]} ว่าอย่างไร`}
+                        value={ps[k].detail} onChange={(ev) => setP(k, { detail: ev.target.value, ai: false, aiPrev: undefined })} aria-label={`รายละเอียด ${SEVEN_P_LABEL[k]}`} />
                       {ps[k].rating === 'negative' && (
-                        <div className="row" style={{ marginTop: 6 }}>
-                          <span className="small">ความรุนแรง</span>
-                          <div className="chips">{(['high', 'medium', 'low'] as Severity[]).map((s) => (
-                            <button key={s} className={`chip ${ps[k].severity === s ? 'active' : ''}`} onClick={() => setP(k, { severity: s })}>{SEVERITY_LABEL[s]}</button>
+                        <div className="row" style={{ marginTop: 8, flexWrap: 'wrap' }}>
+                          <span className="p7-label" style={{ margin: 0 }}>ความรุนแรง</span>
+                          <div className="chips">{(['high', 'medium', 'low'] as Severity[]).map((sv) => (
+                            <button key={sv} className={`chip ${ps[k].severity === sv ? 'active' : ''}`} aria-pressed={ps[k].severity === sv} onClick={() => setP(k, { severity: sv })}>{SEVERITY_LABEL[sv]}</button>
                           ))}</div>
                         </div>
                       )}
                     </div>
                   )}
-                </div>
+                </section>
               ))}
             </div>
           </div>

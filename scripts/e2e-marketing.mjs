@@ -94,7 +94,7 @@ await shot('05-visit-7p');
 t = await text();
 check('AI suggests Product + Process', t.includes('นัดโตะแนะนำ') && t.includes('Product (ต้องปรับ)') && t.includes('Process (ต้องปรับ)'), t.match(/นัดโตะแนะนำ[^\n]*/)?.[0]);
 // Each AI-filled detail must be its own clause (not the whole note repeated)
-const details = await page.locator('input[aria-label^="รายละเอียด"]').evaluateAll((els) => els.map((e) => e.value));
+const details = await page.locator('textarea[aria-label^="รายละเอียด"]').evaluateAll((els) => els.map((e) => e.value));
 check('AI details are per-clause, not duplicated', details.length === 2 && new Set(details).size === 2 && !details.some((d) => d.includes('ลูกค้าย้าย')), JSON.stringify(details));
 // Dismiss one suggestion (Process) → back to "ไม่ได้คุย"
 await page.getByRole('button', { name: 'ปิดคำแนะนำ Process' }).click();
