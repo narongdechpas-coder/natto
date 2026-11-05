@@ -48,9 +48,9 @@ export default function App() {
   // Shared screens (scope-checked inside each screen)
   const shared = (): React.ReactNode | undefined => {
     switch (parts[0]) {
-      case 'partner': return <PartnerIntel id={parts[1]} user={user} tab={query.get('tab')} />;
-      case 'recs': return parts[1] ? <RecommendationDetail id={parts[1]} user={user} /> : undefined;
-      case 'visits': return parts[1] ? <VisitDetail id={parts[1]} user={user} /> : <History user={user} />;
+      case 'partner': return <PartnerIntel key={`${parts[1]}?${query.toString()}`} id={parts[1]} user={user} tab={query.get('tab')} />;
+      case 'recs': return parts[1] ? <RecommendationDetail key={parts[1]} id={parts[1]} user={user} /> : undefined;
+      case 'visits': return parts[1] ? <VisitDetail key={parts[1]} id={parts[1]} user={user} /> : <History user={user} />;
       case 'profile': return <Profile user={user} />;
       default: return undefined;
     }
@@ -62,7 +62,7 @@ export default function App() {
     else if (!parts[0]) screen = user.role === 'manager' ? <TeamDashboard viewer={user} teamId={user.teamId!} /> : <ExecDashboard viewer={user} />;
     else if (parts[0] === 'org' && parts[1] === 'team') screen = user.role === 'executive'
       ? <TeamDashboard viewer={user} teamId={parts[2]} /> : <StateView kind="error" title="ไม่มีสิทธิ์เข้าถึง" text="หน้านี้สำหรับผู้บริหาร" />;
-    else if (parts[0] === 'team') screen = <MarketingDetail viewer={user} userId={parts[1]} />;
+    else if (parts[0] === 'team') screen = <MarketingDetail key={parts[1]} viewer={user} userId={parts[1]} />;
     else screen = shared() ?? notFound;
     return (
       <>
@@ -79,9 +79,9 @@ export default function App() {
   } else {
     switch (parts[0]) {
       case undefined: screen = <Dashboard user={user} />; break;
-      case 'recs': screen = parts[1] ? <RecommendationDetail id={parts[1]} user={user} /> : <Recommendations user={user} />; break;
+      case 'recs': screen = parts[1] ? <RecommendationDetail key={parts[1]} id={parts[1]} user={user} /> : <Recommendations user={user} />; break;
       case 'scenario': screen = <Scenario user={user} />; break;
-      case 'visit': screen = <VisitForm partnerId={parts[2]} user={user} recId={query.get('rec')} planId={query.get('plan')} />; break;
+      case 'visit': screen = <VisitForm key={`${parts[2]}?${query.toString()}`} partnerId={parts[2]} user={user} recId={query.get('rec')} planId={query.get('plan')} />; break;
       case 'report': screen = <MyReport user={user} />; break;
       default: screen = shared() ?? notFound;
     }

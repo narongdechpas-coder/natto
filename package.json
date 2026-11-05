@@ -12,7 +12,8 @@
     "e2e": "node scripts/e2e-marketing.mjs && node scripts/e2e-mgmt.mjs",
     "check:deck": "node scripts/check-deck.mjs",
     "capture:deck": "node scripts/capture-deck.mjs",
-    "deploy": "bash scripts/deploy-pages.sh"
+    "deploy": "bash scripts/deploy-pages.sh",
+    "acceptance": "node scripts/acceptance.mjs"
   },
   "dependencies": {
     "lucide-react": "^1.68.0",
