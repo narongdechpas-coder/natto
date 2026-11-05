@@ -9,13 +9,17 @@
     "preview": "vite preview",
     "test": "vitest run",
     "report": "tsx scripts/dataset-report.ts",
-    "e2e": "node scripts/e2e-marketing.mjs && node scripts/e2e-mgmt.mjs",
+    "e2e": "node scripts/e2e-marketing.mjs && node scripts/e2e-mgmt.mjs && node scripts/check-summary.mjs",
     "check:deck": "node scripts/check-deck.mjs",
     "capture:deck": "node scripts/capture-deck.mjs",
     "deploy": "bash scripts/deploy-pages.sh",
     "acceptance": "node scripts/acceptance.mjs"
   },
   "dependencies": {
+    "@fontsource/mitr": "^5.3.0",
+    "@fontsource/sarabun": "^5.3.0",
+    "html-to-image": "^1.11.13",
+    "jspdf": "^4.2.1",
     "lucide-react": "^1.68.0",
     "react": "^19.3.1",
     "react-dom": "^19.3.1"

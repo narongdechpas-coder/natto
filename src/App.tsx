@@ -15,6 +15,7 @@ import History from './screens/marketing/History';
 import VisitDetail from './screens/marketing/VisitDetail';
 import Profile from './screens/marketing/Profile';
 import MyReport from './screens/marketing/MyReport';
+import VisitSummary from './screens/marketing/VisitSummary';
 import { MgmtShell } from './screens/mgmt/MgmtShell';
 import TeamDashboard from './screens/mgmt/TeamDashboard';
 import ExecDashboard from './screens/mgmt/ExecDashboard';
@@ -83,6 +84,7 @@ export default function App() {
       case 'scenario': screen = <Scenario user={user} />; break;
       case 'visit': screen = <VisitForm key={`${parts[2]}?${query.toString()}`} partnerId={parts[2]} user={user} recId={query.get('rec')} planId={query.get('plan')} />; break;
       case 'report': screen = <MyReport user={user} />; break;
+      case 'summary': screen = <VisitSummary key={parts[1]} partnerId={parts[1]} user={user} />; break;
       default: screen = shared() ?? notFound;
     }
   }

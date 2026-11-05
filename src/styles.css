@@ -386,3 +386,48 @@ details.disclose summary::-webkit-details-marker { display: none; }
   .welcome-name { font-size: 50px; }
   .welcome-actions { margin-top: 18px; }
 }
+
+/* ---------- A4 visit summary (794×1123 CSS px = A4 at 96 dpi) ---------- */
+.a4-wrap { position: relative; overflow: hidden; border-radius: 6px; box-shadow: 0 6px 24px rgba(21,53,125,.18); background: #fff; }
+.a4 { width: 794px; height: 1123px; background: #fff; overflow: hidden; color: #14213d; font-family: var(--font-body); }
+.a4-content { transform-origin: top left; min-height: 1111px; padding: 34px 40px 26px; display: flex; flex-direction: column; gap: 12px; font-size: 13px; line-height: 1.45; }
+.a4-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; border-bottom: 3px solid var(--navy); padding-bottom: 10px; }
+.a4-brand { font-family: var(--font-head); font-size: 30px; font-weight: 600; color: var(--navy); line-height: 1; }
+.a4-brand span { color: var(--red); }
+.a4-brand small { font-size: 12px; color: var(--ink-3); font-weight: 500; letter-spacing: 1px; margin-left: 4px; }
+.a4-doc { font-family: var(--font-head); font-size: 17px; color: var(--navy); margin-top: 6px; white-space: nowrap; }
+.a4-meta { text-align: right; font-size: 11.5px; color: var(--ink-2); display: flex; flex-direction: column; gap: 2px; align-items: flex-end; white-space: nowrap; flex: none; }
+.a4-demo { background: var(--gold); color: var(--navy); font-weight: 700; border-radius: 999px; padding: 2px 10px; font-size: 11px; margin-bottom: 2px; }
+.a4-partner { display: flex; justify-content: space-between; gap: 16px; align-items: flex-start; }
+.a4-partner h1 { font-size: 26px; color: var(--navy); }
+.a4-sub { color: var(--ink-2); font-size: 12.5px; }
+.a4-rec { max-width: 330px; background: var(--cream); border-radius: 10px; padding: 8px 10px; font-size: 12.5px; }
+.a4-pri { display: inline-block; border-radius: 999px; padding: 1px 9px; font-size: 11px; font-weight: 700; margin-bottom: 3px; white-space: nowrap; }
+.a4-pri.high { background: var(--red); color: #fff; }
+.a4-pri.medium { background: var(--gold); color: #5a3d00; }
+.a4-pri.low { background: var(--cobalt-soft); color: var(--navy); }
+.a4-kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.a4-kpis > div { border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; display: flex; flex-direction: column; }
+.a4-kpis span { font-size: 11px; color: var(--ink-2); }
+.a4-kpis b { font-family: var(--font-head); font-weight: 500; font-size: 20px; color: var(--navy); line-height: 1.2; }
+.a4-kpis em { font-style: normal; font-size: 11.5px; color: var(--ink-3); }
+.a4-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.a4-box { border: 1px solid var(--line); border-radius: 10px; padding: 9px 12px; }
+.a4-box h2 { font-size: 14px; color: var(--navy); margin-bottom: 5px; border-left: 4px solid var(--cobalt); padding-left: 7px; }
+.a4-line { margin-bottom: 2px; }
+.a4-list { margin: 3px 0 0; padding-left: 16px; display: flex; flex-direction: column; gap: 3px; }
+.a4-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.a4-table th { text-align: left; font-size: 11px; color: var(--ink-3); font-weight: 600; border-bottom: 1px solid var(--line); padding: 3px 4px; }
+.a4-table td { border-bottom: 1px solid #eef1f6; padding: 4px; vertical-align: top; }
+.a4-table .r { text-align: right; }
+.a4-tag { display: inline-block; border-radius: 6px; padding: 0 6px; font-size: 11px; font-weight: 700; margin: 0 3px 2px 0; white-space: nowrap; }
+.a4-tag.neg { background: var(--red-soft); color: var(--red); }
+.a4-tag.pos { background: var(--green-soft); color: var(--green); }
+.a4-tag.neu { background: var(--amber-soft); color: var(--amber); }
+.a4 .neg { color: var(--red); }
+.a4 .pos { color: var(--green); }
+.a4-muted { color: var(--ink-3); }
+.a4-next { background: var(--cobalt-soft); border-radius: 10px; padding: 8px 12px; font-size: 12.5px; display: flex; flex-direction: column; gap: 2px; }
+.a4-foot { display: flex; justify-content: space-between; gap: 12px; font-size: 10.5px; color: var(--ink-3); border-top: 1px solid var(--line); padding-top: 6px; margin-top: auto; }
+.spin { animation: spin 1s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
