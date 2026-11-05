@@ -7,6 +7,7 @@ import { useStore } from '../../state/store';
 import { Note, PageHeader, Sheet } from '../../ui/common';
 import { navigate } from '../../ui/router';
 import { InstallApp } from '../../ui/InstallApp';
+import { UserPicker } from '../../ui/UserPicker';
 
 const ROLE = { marketing: 'Marketing', manager: 'Manager', executive: 'ผู้บริหาร' } as const;
 
@@ -25,13 +26,7 @@ export default function Profile({ user }: { user: User }) {
 
         <div className="section">
           <div className="section-title"><h2>สลับบทบาท (demo)</h2></div>
-          <div className="stack">
-            {data.users.map((u) => (
-              <button key={u.id} className={`option ${u.id === user.id ? 'active' : ''}`} onClick={() => { login(u.id); navigate('/'); }}>
-                <b>{u.name}</b><span className="small muted">{ROLE[u.role]}{u.teamId ? ` · ${data.teams.find((t) => t.id === u.teamId)!.name}` : ''}</span>
-              </button>
-            ))}
-          </div>
+          <UserPicker users={data.users} teams={data.teams} currentId={user.id} onPick={(u) => { login(u.id); navigate('/'); }} />
         </div>
 
         <div className="section stack">

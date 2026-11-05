@@ -42,16 +42,16 @@ const USERS = [
 let loginOk = 0, ribbonOk = 0;
 for (const [name, , expect] of USERS) {
   await full('/login');
-  await page.locator('button.role-card', { hasText: name }).first().click();
+  await page.locator('button.ug-row', { hasText: name }).first().click();
   await wait(900);
   if ((await text()).includes(expect)) loginOk++;
   if (await hasRibbon()) ribbonOk++;
 }
 check('AC1', 'เข้าระบบได้ทั้ง 9 ผู้ใช้ และเห็นหน้าแรกตามบทบาท', loginOk === 9, `${loginOk}/9`);
 await full('/profile');
-await page.locator('button.option', { hasText: 'วิภาวดี' }).click(); await wait(900);
+await page.locator('button.ug-row', { hasText: 'วิภาวดี' }).click(); await wait(900);
 const sw1 = (await text()).includes('ภาพรวมทีม');
-await go('/profile'); await page.locator('button.option', { hasText: 'กิตติ' }).click(); await wait(900);
+await go('/profile'); await page.locator('button.ug-row', { hasText: 'กิตติ' }).click(); await wait(900);
 check('AC1', 'สลับบทบาทจากหน้าโปรไฟล์ (Marketing ↔ Manager)', sw1 && (await text()).includes('สวัสดี, กิตติ'));
 
 // ---------- AC2 recommendations with reasons and evidence ----------

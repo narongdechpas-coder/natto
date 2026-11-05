@@ -441,3 +441,23 @@ details.disclose summary::-webkit-details-marker { display: none; }
 .welcome-credit img { width: 20px; height: 20px; object-fit: contain; }
 .welcome-credit b { font-family: var(--font-head); font-weight: 500; color: var(--navy); }
 @media (max-height: 700px) { .welcome-credit { bottom: calc(14px + env(safe-area-inset-bottom)); } }
+
+/* ---------- Demo user picker: one section per group ---------- */
+.user-groups { display: flex; flex-direction: column; gap: 14px; }
+.user-group { background: var(--surface); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; border-top: 4px solid var(--navy); }
+.user-group header { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: #f6f8fd; border-bottom: 1px solid var(--line); }
+.user-group header b { font-family: var(--font-head); font-weight: 500; color: var(--navy); font-size: 16px; }
+.user-group header .xs { color: var(--ink-3); }
+.ug-icon { width: 34px; height: 34px; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center; flex: none; background: var(--navy); color: #fff; }
+.ug-count { font-size: 12px; font-weight: 700; color: var(--ink-2); background: #fff; border: 1px solid var(--line); border-radius: 999px; padding: 1px 9px; }
+.ug-row { display: flex; align-items: center; gap: 12px; width: 100%; border: 0; background: transparent; text-align: left; padding: 11px 14px; border-top: 1px solid var(--line); min-height: 56px; }
+.ug-row:first-of-type { border-top: 0; }
+.ug-row:hover { background: var(--cobalt-soft); }
+.ug-row.current { background: var(--cobalt-soft); box-shadow: inset 4px 0 0 var(--cobalt); }
+.ug-avatar { width: 34px; height: 34px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; flex: none; font-family: var(--font-head); font-size: 15px; background: var(--cobalt-soft); color: var(--navy); }
+.user-group.exec { border-top-color: var(--gold); }
+.user-group.exec .ug-icon { background: var(--gold); color: var(--navy); }
+.user-group.exec .ug-avatar { background: var(--gold-soft); color: #6b4a00; }
+.user-group.mgr { border-top-color: var(--cobalt); }
+.user-group.mgr .ug-icon { background: var(--cobalt); }
+.user-group.mgr .ug-avatar { background: #e3ecff; color: var(--cobalt); }
