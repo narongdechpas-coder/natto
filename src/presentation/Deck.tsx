@@ -6,11 +6,20 @@ import { renewalRate } from '../engine/metrics';
 import { fmtDate, fmtMillion, fmtMonth, fmtMonthShort, fmtPct, fmtPp } from '../domain/labels';
 import { PRIORITY_BANDS, ACTIVE_BANDS } from '../engine/config';
 import { LineChart } from '../ui/charts';
+import { Compass, MessageSquareText, ShieldCheck, Target } from 'lucide-react';
 
 const IMG = './deck/';
 const MASCOT = './assets/';
 
-interface Slide { id: string; kicker: string; title: string; demo?: boolean; body: ReactNode; notes: string }
+interface Slide { id: string; kicker: string; title: string; demo?: boolean; cover?: boolean; body: ReactNode; notes: string }
+
+// Selling points: each maps to a feature that already works in the demo (no claims about results).
+const SELLING_POINTS = [
+  { icon: Target, head: 'รู้ว่าควรไปพบใคร', text: 'จัดลำดับ Partner จากข้อมูลรายเดือนให้ทุกเดือน ไม่ต้องเดา' },
+  { icon: ShieldCheck, head: 'รู้ว่าทำไม และเชื่อตัวเลขได้', text: 'ทุกคำแนะนำมีเหตุผล หลักฐาน และสูตรที่ตรวจย้อนได้' },
+  { icon: Compass, head: 'รู้ว่าจะคุยอะไร', text: 'ประเด็นและคำถามพร้อมก่อนเข้าพบ แก้ไขเองได้' },
+  { icon: MessageSquareText, head: 'เสียงของ Partner ไม่หาย', text: 'Feedback 7P ส่งถึง Manager และผู้บริหารทันทีที่บันทึก' },
+];
 
 function useLiveFacts() {
   return useMemo(() => {
@@ -36,6 +45,36 @@ export default function Deck() {
   const o = f.e.opportunity;
 
   const slides: Slide[] = [
+    {
+      id: 'cover', cover: true, kicker: '', title: 'นัดโตะ (NATTO) — ผู้ช่วยคิดว่า วันนี้คุณควรไปพบใคร',
+      body: (
+        <>
+          <div className="cover-top">
+            <div className="cover-text">
+              <div className="cover-kicker">AI Partner Intelligence &amp; Visit Recommendation</div>
+              <div className="wordmark" aria-label="นัดโตะ">นัด<span>โตะ</span></div>
+              <div className="swoosh" aria-hidden />
+              <p className="cover-tagline">ผู้ช่วยคิดว่า <b>วันนี้คุณควรไปพบใคร</b></p>
+              <p className="cover-slogan">หนึ่งนัด หนึ่งเมล็ด หนึ่งก้าวของการเติบโต</p>
+            </div>
+            <img className="cover-mascot" src={`${MASCOT}mascot-natto.webp`} alt="มาสคอตนัดโตะ" />
+          </div>
+          <div className="selling">
+            {SELLING_POINTS.map((sp) => {
+              const I = sp.icon;
+              return (
+                <div key={sp.head} className="sp">
+                  <span className="sp-icon"><I size={22} /></span>
+                  <div><b>{sp.head}</b><p>{sp.text}</p></div>
+                </div>
+              );
+            })}
+          </div>
+          <div className="cover-meta">ข้อเสนอ Pilot สำหรับ Head of Marketing · พฤศจิกายน 2026 · ร่างสำหรับพิจารณา</div>
+        </>
+      ),
+      notes: 'เปิดด้วยประโยคเดียว: "นัดโตะช่วยตอบคำถามที่ Marketing ต้องตอบทุกเช้า ว่าวันนี้ควรไปพบใคร" แล้วไล่จุดขาย 4 ข้อสั้นๆ ทุกข้อมีอยู่ใน demo แล้ว ไม่ใช่สัญญาว่าจะทำ จากนั้นไปหน้าถัดไปเพื่อบอกสิ่งที่ขออนุมัติทันที',
+    },
     {
       id: 'ask', kicker: 'ขออนุมัติ · สำหรับ Head of Marketing',
       title: 'ขออนุมัติทดลองนัดโตะกับทีม Marketing 1 ทีม เป็นเวลา 3 เดือน',
@@ -327,7 +366,9 @@ function DeckView({ slides }: { slides: Slide[] }) {
     return () => window.removeEventListener('keydown', onKey);
   }, [i, go, reading, slides.length]);
 
-  const render = (s: Slide, n: number) => (
+  const render = (s: Slide, n: number) => s.cover ? (
+    <section className="slide cover" key={s.id} aria-label={`สไลด์ ${n + 1}: ${s.title}`}>{s.body}</section>
+  ) : (
     <section className="slide" key={s.id} aria-label={`สไลด์ ${n + 1}: ${s.title}`}>
       {s.demo && <span className="tag-demo">DEMO DATA · ข้อมูลจำลอง</span>}
       <div className="kicker"><span className="num">{n + 1}/{slides.length}</span>{s.kicker}</div>
