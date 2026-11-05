@@ -10,6 +10,12 @@ npm run dev          # app: http://localhost:5173/  · presentation: /presentati
 npm run build        # static site in dist/ (index.html + presentation.html)
 ```
 
+## Live (GitHub Pages)
+
+- App: https://narongdechpas-coder.github.io/natto/
+- Presentation: https://narongdechpas-coder.github.io/natto/presentation.html
+- Redeploy after changes: `npm run deploy` (builds and force-pushes `dist/` to the `gh-pages` branch)
+
 ## Checks
 
 ```bash
