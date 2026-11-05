@@ -227,7 +227,7 @@ check('AC12', 'ป้าย DEMO DATA อยู่ทุกหน้าทุก
 await page.setViewportSize({ width: 1280, height: 728 });
 await page.goto(`${BASE}presentation.html?r=${Date.now()}#5`); await wait(1000);
 const deckTitle = await page.locator('h1.title').innerText();
-check('AC12', 'สไลด์ที่ใช้ข้อมูลใน presentation ติดป้ายข้อมูลจำลอง', (await page.locator('.tag-demo').count()) === 1 && deckTitle.includes('Broker A'), deckTitle.slice(0, 60));
+check('AC12', 'สไลด์ที่ใช้ข้อมูลใน presentation ติดป้ายข้อมูลจำลอง (booth slide 5)', (await page.locator('.tag-demo').count()) === 1 && deckTitle.includes('หลักฐาน'), deckTitle.slice(0, 60));
 await page.setViewportSize({ width: 390, height: 844 });
 
 // ---------- AC14 (UI part) estimates labelled ----------

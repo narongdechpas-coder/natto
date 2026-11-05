@@ -2,7 +2,9 @@
   --navy: #15357d; --cobalt: #2f6bff; --sky: #c6e7ff; --red: #db2017; --gold: #ffc94d; --cream: #fff7e6;
   --ink: #14213d; --ink-2: #4a5574; --ink-3: #7d87a3; --line: #e3e8f2; --bg: #eef4ff;
   --green: #138a4b;
-  --s1: #2a78d6; --s8: #e34948;
+  /* categorical series — same fixed order as the app (dataviz reference palette) */
+  --s1: #2a78d6; --s2: #eb6834; --s3: #1baf7a; --s4: #eda100;
+  --s5: #e87ba4; --s6: #008300; --s7: #6250d6; --s8: #e34948;
   --font-head: 'Mitr', 'Sarabun', system-ui, sans-serif;
   --font-body: 'Sarabun', system-ui, sans-serif;
 }

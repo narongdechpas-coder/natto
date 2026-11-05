@@ -12,6 +12,7 @@ export default defineConfig({
       input: {
         app: resolve(__dirname, 'index.html'),
         presentation: resolve(__dirname, 'presentation.html'),
+        pilot: resolve(__dirname, 'presentation-pilot.html'),
       },
     },
   },

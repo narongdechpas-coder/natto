@@ -10,7 +10,7 @@
     "test": "vitest run",
     "report": "tsx scripts/dataset-report.ts",
     "e2e": "node scripts/e2e-marketing.mjs && node scripts/e2e-mgmt.mjs && node scripts/check-summary.mjs",
-    "check:deck": "node scripts/check-deck.mjs",
+    "check:deck": "node scripts/check-deck.mjs && DECK=presentation-pilot.html SETTLE=300 node scripts/check-deck.mjs && node scripts/check-booth.mjs",
     "capture:deck": "node scripts/capture-deck.mjs",
     "deploy": "bash scripts/deploy-pages.sh",
     "acceptance": "node scripts/acceptance.mjs"
@@ -28,6 +28,7 @@
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "^6.2.1",
+    "qrcode": "^1.5.4",
     "tsx": "^4.23.15",
     "typescript": "^7.0.2",
     "vite": "^8.3.5",

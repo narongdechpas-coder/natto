@@ -3,7 +3,9 @@
 import { createRequire } from 'node:module';
 import fs from 'node:fs';
 const { chromium } = createRequire(import.meta.url)('playwright'); // pre-installed globally in the dev container
-const BASE = (process.env.BASE_URL ?? 'http://localhost:4173/') + 'presentation.html';
+const DECK = process.env.DECK ?? 'presentation.html'; // or presentation-pilot.html
+const BASE = (process.env.BASE_URL ?? 'http://localhost:4173/') + DECK;
+const SETTLE = Number(process.env.SETTLE ?? 4500); // let entrance animations finish before measuring
 const OUT = process.argv[2] ?? 'deck-shots';
 fs.mkdirSync(OUT, { recursive: true });
 const b = await chromium.launch();
@@ -15,7 +17,7 @@ let fails = 0;
 await page.goto(BASE + '#1'); await page.waitForTimeout(1200);
 const total = await page.evaluate(() => Number(document.querySelector('.controls span').textContent.split('/')[1]));
 for (let n = 1; n <= total; n++) {
-  await page.waitForTimeout(250);
+  await page.waitForTimeout(SETTLE);
   const info = await page.evaluate(() => {
     const s = document.querySelector('.slide');
     // Only visible content counts (layout containers may stretch into the padding).

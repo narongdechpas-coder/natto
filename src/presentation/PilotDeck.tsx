@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+import { useMemo } from 'react';
+import { DeckView, type Slide } from './DeckView';
 import { buildDemoData } from '../data/dataset';
 import { DATA_AS_OF } from '../data/config';
 import { explain } from '../engine/explain';
@@ -11,7 +12,6 @@ import { Compass, MessageSquareText, ShieldCheck, Target } from 'lucide-react';
 const IMG = './deck/';
 const MASCOT = './assets/';
 
-interface Slide { id: string; kicker: string; title: string; demo?: boolean; cover?: boolean; body: ReactNode; notes: string }
 
 // Selling points: each maps to a feature that already works in the demo (no claims about results).
 const SELLING_POINTS = [
@@ -37,7 +37,7 @@ function useLiveFacts() {
   }, []);
 }
 
-export default function Deck() {
+export default function PilotDeck() {
   const f = useLiveFacts();
   const bands = PRIORITY_BANDS[ACTIVE_BANDS];
   const rrData = f.rows.map((r) => ({ label: fmtMonthShort(r.month), sub: fmtMonth(r.month), value: renewalRate(r) }));
@@ -321,83 +321,5 @@ export default function Deck() {
     },
   ];
 
-  return <DeckView slides={slides} />;
-}
-
-function DeckView({ slides }: { slides: Slide[] }) {
-  const readIndex = () => {
-    const n = Number(window.location.hash.replace('#', ''));
-    return Number.isInteger(n) && n >= 1 && n <= slides.length ? n - 1 : 0;
-  };
-  const [i, setI] = useState(readIndex);
-  const [notes, setNotes] = useState(false);
-  const [reading, setReading] = useState(false);
-  const [scale, setScale] = useState(1);
-  const touch = useRef<number | null>(null);
-
-  const go = useCallback((n: number) => {
-    const k = Math.max(0, Math.min(slides.length - 1, n));
-    setI(k);
-    history.replaceState(null, '', `#${k + 1}`);
-  }, [slides.length]);
-
-  useEffect(() => {
-    const fit = () => {
-      const w = window.innerWidth, h = window.innerHeight;
-      setReading(w < 900 || h > w);
-      setScale(Math.min(w / 1280, (h - 8) / 720));
-    };
-    fit();
-    window.addEventListener('resize', fit);
-    return () => window.removeEventListener('resize', fit);
-  }, []);
-
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (reading) return;
-      if (['ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); go(i + 1); }
-      else if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); go(i - 1); }
-      else if (e.key === 'Home') go(0);
-      else if (e.key === 'End') go(slides.length - 1);
-      else if (e.key.toLowerCase() === 'n') setNotes((x) => !x);
-      else if (e.key.toLowerCase() === 'f') { if (document.fullscreenElement) document.exitFullscreen(); else document.documentElement.requestFullscreen?.(); }
-    };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [i, go, reading, slides.length]);
-
-  const render = (s: Slide, n: number) => s.cover ? (
-    <section className="slide cover" key={s.id} aria-label={`สไลด์ ${n + 1}: ${s.title}`}>{s.body}</section>
-  ) : (
-    <section className="slide" key={s.id} aria-label={`สไลด์ ${n + 1}: ${s.title}`}>
-      {s.demo && <span className="tag-demo">DEMO DATA · ข้อมูลจำลอง</span>}
-      <div className="kicker"><span className="num">{n + 1}/{slides.length}</span>{s.kicker}</div>
-      <h1 className="title">{s.title}</h1>
-      {s.body}
-      <div className="footer"><span>นัดโตะ (NATTO) · ข้อเสนอสำหรับ Head of Marketing</span><span>ร่างสำหรับพิจารณา · ข้อมูลใน demo เป็นข้อมูลจำลอง</span></div>
-    </section>
-  );
-
-  if (reading) {
-    return <main className="reading">{slides.map(render)}</main>;
-  }
-  const s = slides[i];
-  return (
-    <>
-      <div className="progress" style={{ width: `${((i + 1) / slides.length) * 100}%` }} />
-      <div className="viewport"
-        onTouchStart={(e) => { touch.current = e.touches[0].clientX; }}
-        onTouchEnd={(e) => { if (touch.current == null) return; const dx = e.changedTouches[0].clientX - touch.current; if (Math.abs(dx) > 50) go(i + (dx < 0 ? 1 : -1)); touch.current = null; }}>
-        <div className="stage" style={{ transform: `scale(${scale})` }}>{render(s, i)}</div>
-      </div>
-      <nav className="controls" aria-label="ควบคุมสไลด์">
-        <button onClick={() => go(i - 1)} aria-label="สไลด์ก่อนหน้า" disabled={i === 0}>←</button>
-        <span>{i + 1} / {slides.length}</span>
-        <button onClick={() => go(i + 1)} aria-label="สไลด์ถัดไป" disabled={i === slides.length - 1}>→</button>
-        <button onClick={() => setNotes((x) => !x)} aria-pressed={notes}>โน้ต (N)</button>
-        <button onClick={() => (document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen?.())}>เต็มจอ (F)</button>
-      </nav>
-      {notes && <aside className="notes" aria-label="โน้ตผู้นำเสนอ"><h4>โน้ตผู้นำเสนอ · สไลด์ {i + 1}</h4>{s.notes}</aside>}
-    </>
-  );
+  return <DeckView slides={slides} footer={['นัดโตะ (NATTO) · ข้อเสนอสำหรับ Head of Marketing', 'ร่างสำหรับพิจารณา · ข้อมูลใน demo เป็นข้อมูลจำลอง']} />;
 }

@@ -13,7 +13,8 @@ npm run build        # static site in dist/ (index.html + presentation.html)
 ## Live (GitHub Pages)
 
 - App: https://narongdechpas-coder.github.io/natto/
-- Presentation: https://narongdechpas-coder.github.io/natto/presentation.html
+- Booth presentation (prospects): https://narongdechpas-coder.github.io/natto/presentation.html — add `?booth=1` for unattended autoplay (any touch pauses; resumes after 45 s)
+- Internal pilot-approval deck: https://narongdechpas-coder.github.io/natto/presentation-pilot.html
 - Installable as a mobile app (PWA): open the app link → "ติดตั้งแอปลงมือถือ" (Chrome/Edge/Android) or Share → Add to Home Screen (iOS Safari). Works offline after the first visit.
 - Redeploy after changes: `npm run deploy` (builds and force-pushes `dist/` to the `gh-pages` branch)
 
@@ -33,7 +34,7 @@ npm run report       # dataset / recommendation review table
 - `src/engine/` — rule-based scoring, opportunity formulas, Thai explanation templates, scenarios, 7P suggestion
 - `src/state/` — localStorage overlay (demo actions), role scoping, management aggregations
 - `src/screens/` — Marketing (M01–M06) and Manager/Executive (M07–M08) screens
-- `src/presentation/` — HTML deck for Head of Marketing (uses the same dataset)
+- `src/presentation/` — booth deck (`booth/`: animated features + ROI calculator) and the internal pilot deck; both use the same dataset
 - `docs/phase1-review.md` — dataset, scoring rules and open decisions
 
 Weights, thresholds and formulas in `src/engine/config.ts` are demo assumptions pending Business Owner approval.
