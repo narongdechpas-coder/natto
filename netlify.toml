@@ -1,7 +1,7 @@
 # Netlify build settings (read automatically when Netlify builds this branch).
 # Production branch must be set in the Netlify UI: Site configuration → Build & deploy → Branches and deploy contexts.
 [build]
-  command = "npm ci && npm run build"
+  command = "npm run build"   # Netlify installs dependencies from package-lock.json before this step
   publish = "dist"
 
 [build.environment]
