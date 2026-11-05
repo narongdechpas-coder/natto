@@ -45,7 +45,7 @@ export default function Welcome({ onDone }: { onDone: () => void }) {
         </div>
       </div>
       <footer className="welcome-credit">
-        <img src="./assets/jacky.webp" alt="" width={40} height={40} />
+        <img src="./assets/jacky.webp" alt="" width={20} height={20} />
         <span>Design by <b>Jacky</b></span>
       </footer>
       <div className="welcome-wave" aria-hidden />
