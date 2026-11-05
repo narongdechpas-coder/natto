@@ -1,0 +1,26 @@
+# Netlify build settings (read automatically when Netlify builds this branch).
+# Production branch must be set in the Netlify UI: Site configuration → Build & deploy → Branches and deploy contexts.
+[build]
+  command = "npm ci && npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+# Service worker and manifest must not be cached long, so installed apps pick up new deploys.
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "no-cache"
+
+[[headers]]
+  for = "/manifest.webmanifest"
+  [headers.values]
+    Cache-Control = "no-cache"
+    Content-Type = "application/manifest+json"
+
+# Hashed build assets can be cached for a long time.
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
