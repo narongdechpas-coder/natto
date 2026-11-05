@@ -51,7 +51,19 @@ export default function VisitDetail({ id, user }: { id: string; user: User }) {
             <div><span className="muted">สถานะ:</span> {VISIT_STATUS_LABEL[v.status]}{v.outcome ? ` · ${OUTCOME_LABEL[v.outcome]}` : ''}</div>
             <div><span className="muted">ผู้บันทึก:</span> {userById(data, v.marketingId).name}</div>
             <div><span className="muted">วัตถุประสงค์:</span> {v.objective}</div>
-            <div><span className="muted">สรุปการพูดคุย:</span> {v.summary || '—'}</div>
+            {(v.plan || (v.status === 'planned' && v.summary)) && (
+              <div className="note" style={{ flexDirection: 'column', gap: 2 }}>
+                <b>รายละเอียดแผนเข้าพบ</b>
+                {v.plan?.time && <div><span className="muted">เวลานัด:</span> {v.plan.time} น.</div>}
+                {v.plan?.attendees && <div><span className="muted">ผู้เข้าร่วม:</span> {v.plan.attendees}</div>}
+                {v.plan?.topics?.length ? <div><span className="muted">ประเด็นที่จะคุย:</span> {v.plan.topics.join(' / ')}</div> : null}
+                {/* plans saved before plan fields existed kept their details in summary */}
+                {!v.plan && v.summary && <div>{v.summary}</div>}
+              </div>
+            )}
+            {v.status === 'planned'
+              ? <div><span className="muted">สรุปการพูดคุย:</span> <span className="muted">ยังไม่มี · บันทึกได้หลังเข้าพบ</span></div>
+              : <div><span className="muted">{v.status === 'visited' ? 'สรุปการพูดคุย' : 'เหตุผล / รายละเอียด'}:</span> {v.summary || '—'}</div>}
             {v.recommendationId && <div><span className="muted">มาจากคำแนะนำ:</span> <a href={`#/recs/${v.recommendationId}`}>ดูคำแนะนำ</a></div>}
             {/* PDF only for visits that actually happened and have a recorded result */}
             {canEdit && v.status === 'visited' && <a className="btn secondary block" href={`#/summary/${p.id}`}><FileText size={17} /> สรุปการเข้าพบ {p.name} (PDF)</a>}

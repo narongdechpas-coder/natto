@@ -74,7 +74,11 @@ export interface Visit {
   objective: string;
   summary: string;
   recommendationId: string | null;
+  /** Plan details entered before the visit (kept separate from the post-visit summary). */
+  plan?: VisitPlan;
 }
+
+export interface VisitPlan { time?: string; attendees?: string; topics?: string[] }
 
 export const SEVEN_P = [
   'Product',

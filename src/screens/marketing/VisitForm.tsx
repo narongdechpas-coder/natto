@@ -112,7 +112,7 @@ export default function VisitForm({ partnerId, user, recId, planId }: { partnerI
     const id = saveVisit({
       visit: {
         id: plan?.id, partnerId: p.id, marketingId: p.ownerId, date, status, outcome: visited ? outcome : null,
-        objective: plan?.objective || prepObjective || 'เข้าพบคู่ค้า', summary: summary.trim(), recommendationId: rec?.id ?? null,
+        objective: plan?.objective || prepObjective || 'เข้าพบคู่ค้า', summary: summary.trim(), recommendationId: rec?.id ?? null, plan: plan?.plan,
       },
       feedback: fbKeys.map((k) => ({
         category: k, sentiment: ps[k].rating as Sentiment, severity: ps[k].rating === 'negative' ? ps[k].severity : null,

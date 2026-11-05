@@ -80,7 +80,8 @@ export default function PartnerIntel({ id, user, tab }: { id: string; user: User
     saveVisit({
       visit: {
         id: plannedVisit?.id, partnerId: p.id, marketingId: p.ownerId, date: plan.date, status: 'planned', outcome: null,
-        objective: plan.objective.trim(), summary: [plan.time && `เวลา ${plan.time} น.`, plan.attendees && `ผู้เข้าร่วม: ${plan.attendees}`, topics.length ? `ประเด็น: ${topics.join(' / ')}` : ''].filter(Boolean).join(' · '),
+        objective: plan.objective.trim(), summary: '', // the summary is written only after the visit
+        plan: { time: plan.time, attendees: plan.attendees.trim() || undefined, topics: topics.length ? topics : undefined },
         recommendationId: rec?.id ?? null,
       },
       feedback: [], actions: [],
