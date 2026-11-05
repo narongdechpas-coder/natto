@@ -53,7 +53,8 @@ export default function VisitDetail({ id, user }: { id: string; user: User }) {
             <div><span className="muted">วัตถุประสงค์:</span> {v.objective}</div>
             <div><span className="muted">สรุปการพูดคุย:</span> {v.summary || '—'}</div>
             {v.recommendationId && <div><span className="muted">มาจากคำแนะนำ:</span> <a href={`#/recs/${v.recommendationId}`}>ดูคำแนะนำ</a></div>}
-            {canEdit && <a className="btn secondary block" href={`#/summary/${p.id}`}><FileText size={17} /> สรุปการเข้าพบ {p.name} (PDF)</a>}
+            {/* PDF only for visits that actually happened and have a recorded result */}
+            {canEdit && v.status === 'visited' && <a className="btn secondary block" href={`#/summary/${p.id}`}><FileText size={17} /> สรุปการเข้าพบ {p.name} (PDF)</a>}
             {v.status === 'planned' && canEdit && (
               <button className="btn primary block" onClick={() => navigate(`/visit/new/${p.id}?plan=${v.id}${v.recommendationId ? `&rec=${v.recommendationId}` : ''}`)}>บันทึกผลการเข้าพบ</button>
             )}

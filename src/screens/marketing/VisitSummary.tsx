@@ -47,6 +47,10 @@ export default function VisitSummary({ partnerId, user }: { partnerId: string; u
   if (!s) return <><PageHeader title="สรุปการเข้าพบ" /><StateView kind="empty" title="ไม่พบคู่ค้า" /></>;
   if (!scopePartners(data, user).some((x) => x.id === partnerId)) return <><PageHeader title="สรุปการเข้าพบ" /><StateView kind="error" title="ไม่มีสิทธิ์เข้าถึง" text="คู่ค้านี้ไม่อยู่ในความดูแลของคุณ" /></>;
 
+  if (s.counts.visited === 0) {
+    return <><PageHeader title="สรุปการเข้าพบ" backTo={`/partner/${s.partner.id}`} /><StateView kind="empty" title="ยังดาวน์โหลดสรุปไม่ได้"
+      text={`${s.partner.name} ยังไม่มีการเข้าพบที่บันทึกผล สรุป PDF จะใช้ได้หลังบันทึกผลการเข้าพบครั้งแรก`} /></>;
+  }
   const p = s.partner;
   const k = s.kpis;
   const filename = `NATTO-Visit-Summary-${p.name.replace(/\s+/g, '-')}-${today}.pdf`;

@@ -65,6 +65,18 @@ await as('U-MKT1', '/summary/P010');
 check('RBAC: Marketing cannot export another owner’s partner', (await page.locator('body').innerText()).includes('ไม่มีสิทธิ์เข้าถึง'));
 await as('U-MGR1', '/summary/P001');
 check('Marketing only: Manager has no summary page', !(await page.locator('body').innerText()).includes('ดาวน์โหลด PDF'));
+// PDF only after a visit is recorded
+await as('U-MKT1', '/visits/V0089');
+check('Planned visit: no PDF button', !(await page.locator('body').innerText()).includes('(PDF)'));
+await as('U-MKT1', '/visits/V0016');
+check('Rescheduled visit: no PDF button', !(await page.locator('body').innerText()).includes('(PDF)'));
+await as('U-MKT1', '/partner/P014');
+check('Partner never visited: no summary link', !(await page.locator('body').innerText()).includes('สรุปการเข้าพบ (PDF A4)'));
+await as('U-MKT1', '/summary/P014');
+const blocked = await page.locator('body').innerText();
+check('Partner never visited: direct link shows notice and no download', blocked.includes('ยังดาวน์โหลดสรุปไม่ได้') && !blocked.includes('ดาวน์โหลด PDF'));
+await as('U-MKT1', '/visits/V0001');
+check('Earlier visited visit (history) still offers PDF', (await page.locator('body').innerText()).includes('สรุปการเข้าพบ Broker A (PDF)'));
 await as('U-MKT1', '/visits/V0009');
 check('Entry point on visit detail', (await page.locator('body').innerText()).includes('สรุปการเข้าพบ Broker H (PDF)'));
 await page.setViewportSize({ width: 360, height: 740 });

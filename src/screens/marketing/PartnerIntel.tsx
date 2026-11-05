@@ -126,7 +126,7 @@ export default function PartnerIntel({ id, user, tab }: { id: string; user: User
             </div>
             <div className="card small">
               <div className="row between"><b>การเข้าพบล่าสุด</b>{last && <a href={`#/visits/${last.id}`} className="link-btn">ดูรายละเอียด</a>}</div>
-              {!readOnly && <a href={`#/summary/${p.id}`} className="link-btn" style={{ display: 'inline-flex', alignItems: 'center', gap: 4, marginTop: 2 }}><FileText size={14} /> สรุปการเข้าพบ (PDF A4)</a>}
+              {!readOnly && last && <a href={`#/summary/${p.id}`} className="link-btn" style={{ display: 'inline-flex', alignItems: 'center', gap: 4, marginTop: 2 }}><FileText size={14} /> สรุปการเข้าพบ (PDF A4)</a>}
               <div>{last ? `${fmtDate(last.date)} · ${last.objective}` : 'ยังไม่มีประวัติการเข้าพบ'}</div>
               {plannedVisit && <div className="muted">มีแผนเข้าพบ {fmtDate(plannedVisit.date)}</div>}
               {openFu.length > 0 && (
