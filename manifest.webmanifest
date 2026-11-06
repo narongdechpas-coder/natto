@@ -1,0 +1,20 @@
+{
+  "name": "นัดโตะ (NATTO) — Demo",
+  "short_name": "นัดโตะ",
+  "description": "ผู้ช่วยคิดว่า วันนี้คุณควรไปพบใคร · AI Partner Intelligence & Visit Recommendation (ข้อมูลจำลอง)",
+  "lang": "th",
+  "dir": "ltr",
+  "id": "./",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#FFF7E6",
+  "theme_color": "#15357D",
+  "categories": ["business", "productivity"],
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
