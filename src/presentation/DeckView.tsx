@@ -119,8 +119,9 @@ export function DeckView({ slides, footer }: { slides: Slide[]; footer: [string,
     </section>
   );
 
+  const backToApp = <a className="back-to-app" href="./index.html" aria-label="กลับไปที่แอปนัดโตะ">← กลับแอป</a>;
   if (reading) {
-    return <main className="reading" ref={readingRef}>{slides.map((s, n) => render(s, n, false, s.id))}</main>;
+    return <>{backToApp}<main className="reading" ref={readingRef}>{slides.map((s, n) => render(s, n, false, s.id))}</main></>;
   }
   const s = slides[i];
   return (
@@ -131,6 +132,7 @@ export function DeckView({ slides, footer }: { slides: Slide[]; footer: [string,
         onTouchEnd={(e) => { if (touch.current == null) return; const dx = e.changedTouches[0].clientX - touch.current; if (Math.abs(dx) > 50) go(i + (dx < 0 ? 1 : -1)); touch.current = null; }}>
         <div className="stage" style={{ transform: `scale(${scale})` }}>{render(s, i, true, `${s.id}-${visit}`)}</div>
       </div>
+      {backToApp}
       <nav className="controls" aria-label="ควบคุมสไลด์">
         <button onClick={() => go(i - 1)} aria-label="สไลด์ก่อนหน้า" disabled={i === 0}>←</button>
         <span>{i + 1} / {slides.length}</span>

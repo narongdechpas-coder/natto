@@ -44,9 +44,13 @@ export default function Welcome({ onDone }: { onDone: () => void }) {
           <p className="xs muted" style={{ margin: 0 }}>DEMO · ข้อมูลทั้งหมดเป็นข้อมูลจำลอง</p>
         </div>
       </div>
-      <footer className="welcome-credit">
-        <img src="./assets/jacky.webp" alt="" width={20} height={20} />
-        <span>Design by <b>Jacky</b></span>
+      <footer className="welcome-footer">
+        {/* Same-tab link so the installed app stays in one window; the deck has a "back to app" button */}
+        <a className="welcome-pres" href="./presentation.html">App Presentation</a>
+        <span className="welcome-credit">
+          <img src="./assets/jacky.webp" alt="" width={20} height={20} />
+          <span>Design by <b>Jacky</b></span>
+        </span>
       </footer>
       <div className="welcome-wave" aria-hidden />
     </main>

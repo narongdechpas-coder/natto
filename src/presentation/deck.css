@@ -144,3 +144,11 @@ a { color: var(--cobalt); }
 .reading .cover-tagline { font-size: 22px; }
 .reading .cover-slogan { font-size: 16px; }
 .reading .selling { grid-template-columns: 1fr; }
+
+/* Return to the app (same tab) — top-left on desktop slides and phone reading mode */
+.back-to-app {
+  position: fixed; top: 10px; left: 10px; z-index: 40; text-decoration: none;
+  background: rgba(15,34,87,.85); color: #fff; border-radius: 999px; padding: 6px 14px; font-size: 13px; font-weight: 600;
+}
+.back-to-app:hover, .back-to-app:focus-visible { background: var(--navy); outline: none; }
+.reading .slide:first-child { margin-top: 48px; }

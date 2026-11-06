@@ -9,7 +9,7 @@
     "preview": "vite preview",
     "test": "vitest run",
     "report": "tsx scripts/dataset-report.ts",
-    "e2e": "node scripts/e2e-marketing.mjs && node scripts/e2e-mgmt.mjs && node scripts/check-summary.mjs && node scripts/check-plan.mjs",
+    "e2e": "node scripts/e2e-marketing.mjs && node scripts/e2e-mgmt.mjs && node scripts/check-summary.mjs && node scripts/check-plan.mjs && node scripts/check-presentation-nav.mjs",
     "check:deck": "node scripts/check-deck.mjs && DECK=presentation-pilot.html SETTLE=300 node scripts/check-deck.mjs && node scripts/check-booth.mjs",
     "capture:deck": "node scripts/capture-deck.mjs",
     "deploy": "bash scripts/deploy-pages.sh",

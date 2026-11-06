@@ -248,9 +248,9 @@ export default function PilotDeck() {
             </table>
           </div>
           <div className="col" style={{ flex: 'none', width: 320 }}>
-            <a className="card" href="./index.html#/login" target="_blank" rel="noreferrer" style={{ textDecoration: 'none', textAlign: 'center' }}>
+            <a className="card" href="./index.html#/login" style={{ textDecoration: 'none', textAlign: 'center' }}>
               <img src={`${MASCOT}mascot-natto.webp`} alt="" style={{ width: 150, margin: '0 auto' }} />
-              <h3>เปิด demo นัดโตะ ↗</h3><p className="small muted">เปิดในแท็บใหม่ · ก่อนเริ่มให้กด "รีเซ็ตข้อมูล demo" ที่หน้าโปรไฟล์</p>
+              <h3>เปิด demo นัดโตะ</h3><p className="small muted">ก่อนเริ่มให้กด "รีเซ็ตข้อมูล demo" ที่หน้าโปรไฟล์</p>
             </a>
           </div>
         </div>

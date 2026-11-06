@@ -1,4 +1,4 @@
-import { LogOut, RotateCcw, UserRound } from 'lucide-react';
+import { LogOut, Presentation, RotateCcw, UserRound } from 'lucide-react';
 import { useState } from 'react';
 import { DATA_AS_OF } from '../../data/config';
 import type { User } from '../../domain/types';
@@ -31,6 +31,7 @@ export default function Profile({ user }: { user: User }) {
 
         <div className="section stack">
           <Note>ข้อมูลรายเดือน ณ {fmtDate(DATA_AS_OF)} · วันที่ใน demo คือ {fmtDate(today)} · ข้อมูลทั้งหมดเป็นข้อมูลจำลอง</Note>
+          <a className="btn secondary block" href="./presentation.html"><Presentation size={18} /> App Presentation</a>
           <InstallApp block />
           <button className="btn danger block" onClick={() => setConfirm(true)}><RotateCcw size={18} /> รีเซ็ตข้อมูล demo</button>
           <button className="btn secondary block" onClick={() => { logout(); navigate('/login'); }}><LogOut size={18} /> ออกจากระบบ</button>
