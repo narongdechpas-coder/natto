@@ -12,6 +12,22 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <meta name="apple-mobile-web-app-title" content="นัดโตะ" />
     <title>นัดโตะ (NATTO) — Demo</title>
+    <script>
+      // Netlify landing: a desktop visitor opening the site root sees the booth presentation first
+      // (also what Netlify's site thumbnail captures). Phones/tablets, the installed app, deep links (#/...)
+      // and /index.html (the deck's "back to app" target) always open the app.
+      (function () {
+        try {
+          var q = new URLSearchParams(location.search);
+          var netlify = /\.netlify\.app$/.test(location.hostname) || q.has('netlify-landing-test');
+          var root = location.pathname === '/' || (q.has('netlify-landing-test') && /\/$/.test(location.pathname));
+          var standalone = matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+          var desktop = matchMedia('(pointer: fine)').matches && innerWidth >= 1024 &&
+            !/Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent) && !(navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+          if (netlify && root && !location.hash && !standalone && desktop) location.replace('./presentation.html');
+        } catch (e) { /* never block the app */ }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
