@@ -24,3 +24,11 @@
   for = "/assets/*"
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
+
+# Site root serves the booth presentation (also what Netlify's site thumbnail captures).
+# presentation.html sends phones, tablets and the installed app on to the app (/index.html).
+[[redirects]]
+  from = "/"
+  to = "/presentation.html"
+  status = 200
+  force = true

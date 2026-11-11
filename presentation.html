@@ -6,6 +6,23 @@
     <meta name="theme-color" content="#15357D" />
     <link rel="icon" type="image/webp" href="./assets/mascot-natto.webp" />
     <title>นัดโตะ — AI Partner Intelligence</title>
+    <script>
+      (function () {
+        try {
+          var q = location.search;
+          // Automated browsers (Netlify thumbnail capture) get the final frame without entrance animations.
+          if (navigator.webdriver && !/[?&]anim=1/.test(q)) document.documentElement.classList.add('no-anim');
+          // On Netlify the site root serves this deck (netlify.toml rewrite). Phones, tablets and the installed
+          // app are sent to the app instead; desktops (and anything not clearly mobile) stay on the deck.
+          var netlify = /\.netlify\.app$/.test(location.hostname) || /[?&]netlify-landing-test/.test(q);
+          var atRoot = location.pathname === '/' || (/[?&]netlify-landing-test/.test(q) && /\/$/.test(location.pathname));
+          var mobileUA = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+          var touchOnly = matchMedia('(pointer: coarse)').matches && !matchMedia('(any-pointer: fine)').matches;
+          var standalone = matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+          if (netlify && atRoot && !location.hash && (mobileUA || touchOnly || standalone)) location.replace('./index.html');
+        } catch (e) { /* never block the page */ }
+      })();
+    </script>
   </head>
   <body>
     <div id="deck"></div>

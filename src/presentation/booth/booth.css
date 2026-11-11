@@ -194,3 +194,13 @@
 .banner span { font-size: 16px; opacity: .9; }
 .reading .banner { flex-direction: column; text-align: center; }
 .reading .banner img { margin: 0; }
+
+/* Automated capture (html.no-anim, e.g. Netlify thumbnail): final frame, no entrance animations */
+html.no-anim .slide *, html.no-anim .reveal * { animation: none !important; }
+html.no-anim .slide .booth-pop, html.no-anim .slide .booth-up, html.no-anim .slide .booth-rise, html.no-anim .reveal .rv,
+html.no-anim .drawline .dot, html.no-anim .drawline .endlabel, html.no-anim .drawline .hl, html.no-anim .ai-chips .chip-row { opacity: 1 !important; transform: none !important; }
+html.no-anim .slide .booth-draw { transform: rotate(-2deg) !important; }
+html.no-anim .reveal .vbar { transform: none !important; }
+html.no-anim .reveal .rank-bar { width: var(--w) !important; }
+html.no-anim .drawline .stroke { stroke-dashoffset: 0 !important; }
+html.no-anim .drawdonut .seg { stroke-dasharray: var(--len) var(--c) !important; }

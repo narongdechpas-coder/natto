@@ -468,3 +468,7 @@ details.disclose summary::-webkit-details-marker { display: none; }
 .user-group.mgr { border-top-color: var(--cobalt); }
 .user-group.mgr .ug-icon { background: var(--cobalt); }
 .user-group.mgr .ug-avatar { background: #e3ecff; color: var(--cobalt); }
+
+/* Automated capture (html.no-anim): show the final frame of the welcome screen */
+html.no-anim .welcome, html.no-anim .welcome * { animation: none !important; }
+html.no-anim .welcome-beans { display: none; }
