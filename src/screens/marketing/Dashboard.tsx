@@ -57,6 +57,7 @@ export default function Dashboard({ user }: { user: User }) {
           })}
         </div>
 
+        <div className="dash-cols">
         <div className="section">
           <div className="section-title"><h2>คู่ค้าที่ควรพิจารณาเข้าพบ</h2><a href="#/recs">ดูทั้งหมด →</a></div>
           {todo.length ? todo.map((r) => <RecCard key={r.id} r={r} compact />) : (
@@ -80,14 +81,12 @@ export default function Dashboard({ user }: { user: User }) {
             <span className="p-avatar"><Compass size={22} /></span>
             <div className="grow"><b>ค้นหาตามโจทย์ธุรกิจ</b><div className="small muted">เช่น เปิดตัวผลิตภัณฑ์ EV ควรไปพบใคร</div></div>
           </a>
-        </div>
-
-        <div className="section">
-          <button className="cta-ai" onClick={() => showToast('ถามนัดโตะ (AI Assistant) จะเปิดให้ใช้เร็วๆ นี้')} aria-label="ถามนัดโตะ เร็วๆ นี้">
+          <button className="cta-ai" style={{ marginTop: 18 }} onClick={() => showToast('ถามนัดโตะ (AI Assistant) จะเปิดให้ใช้เร็วๆ นี้')} aria-label="ถามนัดโตะ เร็วๆ นี้">
             <Bot size={26} />
             <span><b>ถามนัดโตะ (AI Assistant)</b><div className="xs" style={{ opacity: .85 }}>เช่น "วันนี้ควรโฟกัสคู่ค้าไหน?"</div></span>
             <span className="soon">เร็วๆ นี้</span>
           </button>
+        </div>
         </div>
       </div>
     </>

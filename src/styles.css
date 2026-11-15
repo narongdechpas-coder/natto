@@ -472,3 +472,28 @@ details.disclose summary::-webkit-details-marker { display: none; }
 /* Automated capture (html.no-anim): show the final frame of the welcome screen */
 html.no-anim .welcome, html.no-anim .welcome * { animation: none !important; }
 html.no-anim .welcome-beans { display: none; }
+
+/* ---------- Wide screens (foldables, tablets, Chrome "desktop site" on phones) ----------
+   The app column grows to use the width instead of a 480px strip with empty margins. */
+@media (min-width: 720px) {
+  .mobile-shell, .bottom-nav { max-width: 920px; }
+  .page { padding: 16px 28px 28px; }
+  .page-header { padding: 14px 28px 4px; }
+  .hero { padding: 20px 28px 24px; border-radius: 0 0 32px 32px; }
+  .hero h1 { font-size: 26px; }
+  .hero .mascot { width: 150px; right: 20px; }
+  .kpi { padding: 14px 8px; }
+  .kpi .v { font-size: 26px; }
+  .kpi .l { font-size: 13px; }
+  .bottom-nav a { font-size: 13px; }
+  .sheet { max-width: 560px; border-radius: 22px; margin-bottom: 24px; }
+  /* Dashboard: recommendations left, insight + tools right */
+  .dash-cols { display: grid; grid-template-columns: 3fr 2fr; gap: 24px; align-items: start; }
+  /* Long card lists flow into two columns */
+  .card-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 10px; }
+  .card-list > .card + .card { margin-top: 0; }
+  .card-list > .state { grid-column: 1 / -1; }
+}
+@media (min-width: 1100px) {
+  .mobile-shell, .bottom-nav { max-width: 1040px; }
+}

@@ -61,7 +61,7 @@ export default function Recommendations({ user }: { user: User }) {
           </select>
         </div>
 
-        <div className="section stack">
+        <div className="section stack card-list">
           {list.length ? list.map((r) => <RecCard key={r.id} r={r} />) : (
             all.length
               ? <StateView kind="empty" title="ไม่พบคู่ค้าตามเงื่อนไข" text="ลองเปลี่ยนตัวกรองหรือคำค้นหา" />
