@@ -7,6 +7,7 @@ import { useStore } from '../../state/store';
 import { AsOf, MASCOT, StateView } from '../../ui/common';
 import { navigate } from '../../ui/router';
 import { RecCard } from './shared';
+import { VisitCalendar } from './VisitCalendar';
 
 export default function Dashboard({ user }: { user: User }) {
   const { data, today, showToast } = useStore();
@@ -46,7 +47,8 @@ export default function Dashboard({ user }: { user: User }) {
         <img className="mascot" src={MASCOT} alt="" />
       </div>
       <div className="page">
-        <div className="kpi-grid" style={{ marginTop: 4 }}>
+        <VisitCalendar data={data} visits={myVisits} today={today} />
+        <div className="kpi-grid" style={{ marginTop: 12 }}>
           {kpis.map((k) => {
             const I = k.icon;
             return (

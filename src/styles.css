@@ -497,3 +497,37 @@ html.no-anim .welcome-beans { display: none; }
 @media (min-width: 1100px) {
   .mobile-shell, .bottom-nav { max-width: 1040px; }
 }
+
+/* ---------- Dashboard visit calendar (accordion, closed by default) ---------- */
+.vcal { padding: 0; margin-top: 4px; }
+.vcal summary { display: flex; align-items: center; gap: 12px; padding: 12px 14px; cursor: pointer; list-style: none; }
+.vcal summary::-webkit-details-marker { display: none; }
+.vcal summary b { color: var(--navy); font-family: var(--font-head); font-weight: 500; font-size: 16px; display: block; }
+.vcal-icon { width: 40px; height: 40px; border-radius: 12px; }
+.vcal-chev { color: var(--ink-3); transition: transform .2s; flex: none; }
+.vcal[open] .vcal-chev { transform: rotate(180deg); }
+.vcal-body { padding: 0 14px 14px; border-top: 1px solid var(--line); }
+.vcal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-top: 10px; }
+.vcal-wd { text-align: center; font-size: 12px; font-weight: 700; color: var(--ink-3); padding: 2px 0; }
+.vcal-day {
+  border: 0; background: transparent; border-radius: 10px; min-height: 42px; padding: 4px 0 3px;
+  display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 2px; color: var(--ink); font-size: 14px;
+}
+.vcal-day.has { background: var(--cobalt-soft); }
+.vcal-day.today span { background: var(--red); color: #fff; border-radius: 999px; min-width: 24px; line-height: 24px; font-weight: 700; }
+.vcal-day.sel { box-shadow: inset 0 0 0 2px var(--cobalt); }
+.vcal-day.today.sel span { box-shadow: 0 0 0 2px #fff; }
+.vcal-dots { display: flex; gap: 2px; height: 6px; }
+.vcal-dots b, .vcal-legend b { display: inline-block; width: 6px; height: 6px; border-radius: 50%; }
+.vcal-legend { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 8px; }
+.vcal-legend span { display: inline-flex; align-items: center; gap: 4px; }
+.vcal-list { margin-top: 12px; display: flex; flex-direction: column; gap: 6px; }
+.vcal-item { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 12px; background: var(--bg); text-decoration: none; color: inherit; }
+.vcal-time { font-size: 12px; font-weight: 700; color: var(--navy); width: 46px; flex: none; line-height: 1.2; }
+.vcal-sub { display: block; }
+@media (min-width: 720px) {
+  .vcal-body { display: grid; grid-template-columns: 3fr 2fr; gap: 0 24px; }
+  .vcal-body .vcal-legend { grid-column: 1; }
+  .vcal-body .vcal-list { grid-column: 2; grid-row: 1 / span 2; }
+  .vcal-day { min-height: 48px; }
+}
