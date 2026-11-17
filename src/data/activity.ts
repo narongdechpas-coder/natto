@@ -137,6 +137,20 @@ export function generateActivity(partners: Partner[]): ActivityData {
     visits.push({ id: `V${String(vN++).padStart(4, '0')}`, partnerId: p.id, marketingId: p.ownerId, date: addDays(DEMO_TODAY, 3 + i * 2), status: 'planned', outcome: null, objective: 'ติดตามคำแนะนำจากนัดโตะ', summary: '', recommendationId: null });
   });
 
+  // Demo calendar: a handful of November visits for the demo Marketing user so the dashboard calendar
+  // shows every state (visited / rescheduled / today / upcoming). Background partners with no November
+  // recommendation, and dates after the batch issue date (1 Nov), so engine results are unchanged.
+  const kittiNov: Omit<Visit, 'id' | 'marketingId'>[] = [
+    { partnerId: 'P013', date: '2026-11-05', status: 'visited', outcome: 'met_objective', objective: 'เยี่ยมตามรอบ', summary: 'Partner พอใจบริการเคลม ขอข้อมูลแคมเปญปลายปี (ข้อมูลจำลอง)', recommendationId: null, plan: { time: '10:30' } },
+    { partnerId: 'P014', date: '2026-11-12', status: 'rescheduled', outcome: null, objective: 'ทบทวนยอดขายไตรมาส 4', summary: '', recommendationId: null, plan: { time: '13:00' } },
+    { partnerId: 'P014', date: DEMO_TODAY, status: 'planned', outcome: null, objective: 'ทบทวนยอดขายไตรมาส 4 (นัดใหม่)', summary: '', recommendationId: null, plan: { time: '10:00', topics: ['ยอดขายไตรมาส 4', 'แผนต่ออายุเดือนธันวาคม'] } },
+    { partnerId: 'P013', date: '2026-11-27', status: 'planned', outcome: null, objective: 'นำเสนอแคมเปญปลายปี', summary: '', recommendationId: null, plan: { time: '14:00' } },
+  ];
+  for (const v of kittiNov) {
+    const p = partners.find((x) => x.id === v.partnerId);
+    if (p) visits.push({ ...v, id: `V${String(vN++).padStart(4, '0')}`, marketingId: p.ownerId });
+  }
+
   // Follow-ups with status in_progress: open ones not overdue and older than 7 days
   for (const f of followUps) {
     if (f.status === 'open' && f.dueDate >= DEMO_TODAY && f.createdDate <= addDays(DEMO_TODAY, -7)) f.status = 'in_progress';
